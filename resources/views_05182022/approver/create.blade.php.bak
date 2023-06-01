@@ -1,0 +1,82 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><h3>Create new User</h3></div>
+            <div class="card-body">
+                <form autocomplete="off" method="post" action="{{ route('approvers.store') }}">
+                @csrf
+                    <div class="form-group">
+                        <label for="exampleInputName1">Name</label>
+                        <input type="text" name="name" class="form-control text-uppercase" id="exampleInputName1" placeholder="Name">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail3">Email</label>
+                                <input type="email" name="email" class="form-control" id="exampleInputEmail3" placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="exampleSelectGender">Username</label>
+                                <input type="text" name="username" class="form-control" id="exampleInputEmail3" placeholder="Username">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail3">Department</label>
+                                <input type="text" name="department" class="form-control" id="exampleInputEmail3" placeholder="Department">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="exampleSelectGender">Designation</label>
+                                <input type="text" name="designation" class="form-control" id="exampleInputEmail3" placeholder="Designation">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="exAlternateApprover">Type</label>
+                                <select name="type" class="form-control" id="exAlternateApprover">
+                                    <option value="approver">Approver</option>
+                                    <option value="alternate approver">Alternate Approver</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="exampleSelectApprover">Role</label>
+                                <select name="role" class="form-control" id="exampleSelectApprover">
+                                    <option value="read only">Read Only</option>
+                                    <option value="read write">Read Write</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                       <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="exampleSelectGender">Conditional Amount</label>
+                                <input type="text" name="condition" class="form-control" id="exampleInputEmail3" placeholder="Conditional Amount">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                    <button class="btn btn-light">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

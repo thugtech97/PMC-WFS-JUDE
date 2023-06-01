@@ -1,0 +1,86 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><h3>Update User</h3></div>
+            <div class="card-body">
+                <form autocomplete="off" method="post" action="{{ route('approvers.update',$data->id) }}">
+                    @csrf
+                    @method('PUT')
+                    <div class="form-group">
+                        <label for="exampleInputName1">Name</label>
+                        <input type="text" name="name" class="form-control" id="exampleInputName1" placeholder="Name" value="{{$data->name}}">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail3">Email</label>
+                                <input type="email" name="email" class="form-control" id="exampleInputEmail3" placeholder="Email" value="{{$data->email}}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="exampleSelectGender">Username</label>
+                                <input type="text" name="username" class="form-control" id="exampleInputEmail3" placeholder="Username" value="{{$data->username}}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail3">Department</label>
+                                <input type="text" name="department" class="form-control" id="exampleInputEmail3" placeholder="Department" value="{{$data->department}}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="exampleSelectGender">Designation</label>
+                                <input type="text" name="designation" class="form-control" id="exampleInputEmail3" placeholder="Designation" value="{{$data->designation}}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="exAlternateApprover">Type</label>
+                                <select name="user_type" class="form-control" id="exAlternateApprover">
+                                    <option @if($data->user_type == 'approver') selected @endif value="approver">Approver</option>
+                                    <option @if($data->user_type == 'alternate approver') selected @endif value="alternate approver">Alternate Approver</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="exampleSelectApprover">Role</label>
+                                <select name="role" class="form-control" id="exampleSelectApprover">
+                                    <option @if($data->role == 'read only') selected @endif value="read only">Read Only</option>
+                                    <option @if($data->role == 'read write') selected @endif value="read write">Read Write</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                      <div class="row">
+                       <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="exampleSelectGender">Conditional Amount</label>
+                                <input type="text" name="condition" class="form-control" id="exampleInputEmail3" placeholder="Conditional Amount" value="{{$data->condition}}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary mr-2">Save Changes</button>
+                    <button class="btn btn-light">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+

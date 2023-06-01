@@ -1,0 +1,531 @@
+@extends('layouts.app')
+
+@section('pagecss')
+    <link rel="stylesheet" href="{{ asset('assets/css/dialog/sweetalert2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/dialog/dialog.css') }}">
+@endsection
+
+@section('content')
+<div class="page-header">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <i class="ik ik-file-text bg-blue"></i>
+                <div class="d-inline">
+                    <h5>Transaction Details</h5>
+                    <span>lorem ipsum dolor sit amet, consectetur adipisicing elit nashtyblue</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <nav class="breadcrumb-container" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="#">Transactions</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 col-md-7">
+        <div class="card">
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane show active" id="last-month" role="tabpanel" aria-labelledby="pills-profile-tab">
+                    <div class="card-body">
+                        <h4 class="mt-10">Type : {{ $data->details}}</h4>
+                        <div class="row mt-20">
+                            <div class="col-md-3 col-6"> <strong>Requestor</strong>
+                                <br>
+                                <p class="text-muted">{{$data->requestor}}</p>
+                            </div>
+                            <div class="col-md-3 col-6"> <strong>Email</strong>
+                                <br>
+                                <p class="text-muted">{{ $data->email }}</p>
+                            </div>
+                            <div class="col-md-3 col-6"> <strong>Date Submitted</strong>
+                                <br>
+                                <p class="text-muted">{{ $data->created_at }}</p>
+                            </div>
+                            <div class="col-md-3 col-6"> <strong>Status</strong>
+                                <br>
+                                <p class="text-muted">{{$data->status}}</p>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">To view the whole transaction details. Please click this <a href="{{$data->source_url}}" target="_blank" class="text-blue">link</a>.</div>
+
+                        <hr>
+                        <h5 class="mt-30">Approvers</h5>
+                        <div class="row clearfix">
+                            @foreach($data->approvers as $a)
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card ticket-card">
+                                        <div class="card-body @if($data->status == 'CANCELLED' || $data->status == 'HOLD') @else(\App\ApprovalStatus::current_approver($data->id) == $a->approver_id) bg-default @endif">
+                                            <p id="app{{$a->approver_id}}" class="mb-30 @if($a->status == 'APPROVED') bg-success @elseif($a->status == 'HOLD') bg-warning @elseif($a->status == 'CANCELLED') bg-danger @else bg-secondary @endif lbl-card"><i id="ticon{{$a->approver_id}}" class="ik @if($a->status == 'APPROVED') ik-check-circle @elseif($a->status == 'HOLD') ik-alert-triangle @elseif($a->status == 'CANCELLED') ik-bell-off @else ik-info @endif "></i> <span id="app{{$a->approver_id}}_status">{{ $a->status }}</span></p>
+                                            @if($a->status=='CANCELLED' && Auth::user()->id == $a->approver_id)
+                                                <a class="btn btn-primary pull-right" href="#" >
+                                                    <i class="fa fa-undo pull-right"></i>
+                                                </a>
+                                            @endif                                          
+                                            <div class="text-center">
+                                                <img src="{{ asset('assets/img/users/user.png') }}" style="height: 70px;" alt="">
+                                                <br>
+                                                <p class="mb-0 d-inline-block">{{ strtoupper($a->user->name) }}</p>
+                                                <br>
+                                                <p class="mb-5 d-inline-block text-uppercase"><small>{{ $a->user->designation }}</small></p>
+                                            </div> 
+                                            
+                                            <p class="mt-10"><small>Date Responded : {{ \App\Transaction::date_format($a->updated_at) }}</small><br>
+                                            <small>Response Aging : {{ \App\ApprovalStatus::no_of_days_of_responding($data->id,$a->approver_id) }}</small></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        
+                        <hr>
+                        @php $nxtapprover = \App\ApprovalStatus::next_approver($data->id,$approverstatus->sequence_number); @endphp
+                     
+                        @if($previous)
+                            @if($approverstatus->status == 'PENDING' && $data->status ='CANCELLED' && $previous->status=='APPROVED')
+                                <div class="row" id="approverBtn">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <form class="forms-sample">
+                                                    @csrf
+                                                    <div class="form-group">
+                                                        <label for="exampleTextarea1">Remarks</label>
+                                                        <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                                    </div>
+                                                    <div class="float-md-right">
+                                                        <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}');">Approve</button>
+
+                                                        <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}');">Hold</button>
+
+                                                        <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}');">Disapprove</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @elseif($approverstatus->status == 'HOLD' && $data->status ='HOLD' && $previous->status=='APPROVED')
+                               <div class="row" id="approverBtn">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <form class="forms-sample">
+                                                    @csrf
+                                                    <div class="form-group">
+                                                        <label for="exampleTextarea1">Remarks</label>
+                                                        <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                                    </div>
+                                                    <div class="float-md-right">
+                                                        <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}');">Approve</button>
+
+                                                        <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}');">Hold</button>
+
+                                                        <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}');">Disapprove</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @elseif($approverstatus->status == 'HOLD' && $data->status ='HOLD' && $previous=='APPROVED')
+                            <div class="row" id="approverBtn">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <form class="forms-sample">
+                                                    @csrf
+                                                    <div class="form-group">
+                                                        <label for="exampleTextarea1">Remarks</label>
+                                                        <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                                    </div>
+                                                    <div class="float-md-right">
+                                                        <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}');">Approve</button>
+
+                                                        <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}');">Hold</button>
+
+                                                        <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}');">Disapprove</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @else
+                            @if($currentuser->status=='PENDING' || $currentuser->status=='HOLD')
+                                <div class="row" id="approverBtn">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <form class="forms-sample">
+                                                    @csrf
+                                                    <div class="form-group">
+                                                        <label for="exampleTextarea1">Remarks</label>
+                                                        <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                                    </div>
+                                                    <div class="float-md-right">
+                                                        <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}');">Approve</button>
+
+                                                        <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}');">Hold</button>
+
+                                                        <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}');">Disapprove</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                            
+                            @endif
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('pagejs')
+    <script src="{{ asset('assets/plugins/sweetalert/dist/sweetalert.min.js') }}"></script>    
+    <script src="{{ asset('assets/plugins/summernote/dist/summernote-bs4.min.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+            $.ajaxSetup({
+                headers: {
+
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+        });
+        
+
+        function view_request(id){
+            $.ajax({
+                type: "GET",
+                url: "/get-request-details/"+id,
+                success: function( response ) {
+                    $('#editLayoutItem').modal('show');
+                    $('#transaction_details').html(response);
+                }
+            });
+        }
+
+    // approve request
+        function approve(rqid,tid,uid,status,trans_type,approver_name,designation,last_approver,nxtapprover){
+            var remarks = $('#remarks').val();
+            var overall_status = '';
+            var bg = "";
+
+            if(status == 'HOLD' || status == 'CANCELLED'){
+
+                overall_status = status;
+
+            } else {
+
+                if(uid == last_approver){
+                    if(status = 'APPROVED'){
+                        overall_status = 'FULLY APPROVED';
+                    } else {
+                        overall_status = status;
+                    }
+                    
+                } else {
+                    overall_status = 'PARTIALLY APPROVED';
+                }
+            }
+
+            swal({
+                title: "Are you sure?",
+                text: "Do you really want to approve this transaction?",
+                icon: "warning",
+                buttons: ["Cancel", "Yes Approve!"],
+                dangerMode: false,
+            })
+            .then((willApprove) => {
+                if(willApprove){
+
+                    swal({
+                        title: 'Please wait..!',
+                        text: 'Updating approval status is in progress..',
+                        button: false,
+                        closeOnEsc: false,
+                        closeOnClickOutside: false,
+                        allowOutsideClick: false,
+                        allowEnterKey: false,
+                    })
+                    $.ajax({
+                        url: "http://172.16.20.28/WFH-OREM/api/workflow/receiver.php",
+                        type: "POST",
+                        data: { 
+                            trans_id : rqid,
+                            workflow_token : 'base64:Hxle0o3dpTUGQlpJy3dBbMhlDu9Y98uMqZEqFe/Upcs=',
+                            details : trans_type,
+                            approver : approver_name,
+                            current_approver : designation,
+                            approver_remarks : remarks,
+                            status : status,
+                            overallstatus : overall_status,
+                            nextapprover : nxtapprover 
+                        },
+
+                        success: function( response ) {
+                            $.ajax({
+                                type: 'POST',
+                                url: '/updateStatus',
+                                data: { 
+                                    rid : tid,
+                                    uid : uid,
+                                    rstatus : status,
+                                    remarks : remarks 
+                                },
+
+                                success: function( response ) {
+
+                                    $('#app'+uid).removeClass('bg-secondary');
+                                    $('#app'+uid).addClass('bg-success'); 
+                                    $('#ticon'+uid).removeClass('ik-info');
+                                    $('#ticon'+uid).addClass('ik-check-circle'); 
+
+                                    $('#app'+uid+'_status').html('APPROVED');
+                                    $('#approverBtn').hide();
+                                    swal({
+                                        title: "Success",
+                                        text: "Transaction has been approved!",
+                                        icon: "success",
+                                        closeOnEsc: false,
+                                        closeOnClickOutside: false,
+                                        allowOutsideClick: false,
+                                        allowEnterKey: false,
+                                    }).then(function() {
+                                        window.location.reload();
+                                    });                                     
+                                },
+                            });  
+                        },
+                        error: function( response ) {
+                            swal("Connection from other application was interrupted!");
+                        }
+                    }); 
+                }  
+            });
+        }
+    //
+
+    // hold request
+        function hold(rqid,tid,uid,status,trans_type,approver_name,designation,last_approver,nxtapprover){
+            var remarks = $('#remarks').val();
+            var overall_status = '';
+            var bg = "";
+
+            if(status == 'HOLD' || status == 'CANCELLED'){
+
+                overall_status = status;
+
+            } else {
+
+                if(uid == last_approver){
+                    if(status = 'APPROVED'){
+                        overall_status = 'FULLY APPROVED';
+                    } else {
+                        overall_status = status;
+                    }
+                    
+                } else {
+                    overall_status = 'PARTIALLY APPROVED';
+                }
+            }
+
+            swal({
+                title: "Are you sure?",
+                text: "Do you really want to hold this transaction?",
+                icon: "warning",
+                buttons: ["Cancel", "Yes Hold!"],
+                dangerMode: true,
+            })
+            .then((willHold) => {
+                if(willHold){
+
+                    swal({
+                        title: 'Please wait..!',
+                        text: 'Updating approval status is in progress..',
+                        button: false,
+                        closeOnEsc: false,
+                        closeOnClickOutside: false,
+                        allowOutsideClick: false,
+                        allowEnterKey: false,
+                    })
+
+                    $.ajax({
+                        url: "http://172.16.20.28/WFH-OREM/api/workflow/receiver.php",
+                        type: "POST",
+                        data: { 
+                                trans_id : rqid,
+                                workflow_token : 'base64:Hxle0o3dpTUGQlpJy3dBbMhlDu9Y98uMqZEqFe/Upcs=',
+                                details : trans_type,
+                                approver : approver_name,
+                                current_approver : designation,
+                                approver_remarks : remarks,
+                                status : status,
+                                overallstatus : overall_status,
+                                nextapprover : nxtapprover
+                            },
+                        success: function( response ) {
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '/updateStatus',
+                                data: { 
+                                        rid : tid,
+                                        uid : uid,
+                                        rstatus : status,
+                                        remarks : remarks 
+                                    },
+                                success: function( response ) {
+                                    $('#app'+uid).removeClass('bg-secondary');
+                                    $('#app'+uid).addClass('bg-warning'); 
+                                    $('#ticon'+uid).removeClass('ik-info');
+                                    $('#ticon'+uid).addClass('ik-alert-triangle'); 
+
+                                    $('#app'+uid+'_status').html('Hold');
+                                    $('#approverBtn').hide();
+                                    swal({
+                                        title: "Success",
+                                        text: "Transaction has been hold!",
+                                        icon: "success",
+                                        closeOnEsc: false,
+                                        closeOnClickOutside: false,
+                                        allowOutsideClick: false,
+                                        allowEnterKey: false,
+                                    }).then(function() {
+                                        window.location.reload();
+                                    });                                      
+                                },
+                            });
+                        },
+                        error: function( response ) {
+                            swal("Connection from other application was interrupted!");
+                        }
+                    }); 
+    
+                }
+                
+            });
+        }
+    //
+
+    // cancel request
+        function cancel(rqid,tid,uid,status,trans_type,approver_name,designation,last_approver,nxtapprover){
+            var remarks = $('#remarks').val();
+            var overall_status = '';
+            var bg = "";
+
+            if(status == 'HOLD' || status == 'CANCELLED'){
+
+                overall_status = status;
+
+            } else {
+
+                if(uid == last_approver){
+                    if(status = 'APPROVED'){
+                        overall_status = 'FULLY APPROVED';
+                    } else {
+                        overall_status = status;
+                    }
+                    
+                } else {
+                    overall_status = 'PARTIALLY APPROVED';
+                }
+            }
+
+            swal({
+                title: "Are you sure?",
+                text: "Do you really want to cancel this transaction?",
+                icon: "warning",
+                buttons: ["Cancel", "Yes Cancel!"],
+                dangerMode: true,
+            })
+            .then((willCancel) => {
+                if(willCancel){
+
+                    swal({
+                        title: 'Please wait..!',
+                        text: 'Updating approval status is in progress..',
+                        button: false,
+                        closeOnEsc: false,
+                        closeOnClickOutside: false,
+                        allowOutsideClick: false,
+                        allowEnterKey: false,
+                    })
+
+                    $.ajax({
+                        url: "http://172.16.20.28/WFH-OREM/api/workflow/receiver.php",
+                        type: "POST",
+                        data: { 
+                            trans_id : rqid,
+                            workflow_token : 'base64:Hxle0o3dpTUGQlpJy3dBbMhlDu9Y98uMqZEqFe/Upcs=',
+                            details : trans_type,
+                            approver : approver_name,
+                            current_approver : designation,
+                            approver_remarks : remarks,
+                            status : status,
+                            overallstatus : overall_status,
+                            nextapprover : nxtapprover 
+                        },
+
+                        success: function( response ) {
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '/updateStatus',
+                                data: { 
+                                    rid : tid,
+                                    uid : uid,
+                                    rstatus : status,
+                                    remarks : remarks 
+                                },
+
+                                success: function( response ) {
+
+                                    $('#app'+uid).removeClass('bg-secondary');
+                                    $('#app'+uid).addClass('bg-danger'); 
+                                    $('#ticon'+uid).removeClass('ik-info');
+                                    $('#ticon'+uid).addClass('ik-bell-off'); 
+
+                                    $('#app'+uid+'_status').html('Cancelled');
+                                    $('#approverBtn').hide();
+                                    swal({
+                                        title: "Success",
+                                        text: "Transaction has been cancelled!",
+                                        icon: "success",
+                                        closeOnEsc: false,
+                                        closeOnClickOutside: false,
+                                        allowOutsideClick: false,
+                                        allowEnterKey: false,
+                                    }).then(function() {
+                                        window.location.reload();
+                                    });  
+                                },
+                            });
+                        },
+                        error: function( response ) {
+                            swal("Connection from other application was interrupted!");
+                        }
+                    }); 
+    
+                }
+                
+            });
+        }
+    //
+    </script>
+@endsection

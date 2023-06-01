@@ -1,0 +1,43 @@
+<?php 
+
+	include('config.php');
+
+	header ("Access-Control-Allow-Origin: *");
+	header ("Access-Control-Expose-Headers: Content-Length, X-JSON");
+	header ("Access-Control-Allow-Methods: POST");
+	header ("Access-Control-Allow-Headers: *");
+
+	$transaction_type =  $_GET['type']; // ex OREM - Travel Order 	
+
+	$data = sqlsrv_fetch_array(sqlsrv_query($conn,"select * from allowed_transactions where name = '".$transaction_type."' "));
+
+	if(isset($_POST['token'])){
+		
+		// orem submitted token request == orem token saved on workflow
+		if($_POST['token'] == $data['token']){
+
+			$insert = "insert into transactions (ref_req_no,source_app,source_url,details,requestor,status,created_at) values ('".$_POST['refno']."','".$_POST['sourceapp']."','".$_POST['sourceurl']."','".$transaction_type."','".$_POST['requestor']."', 'PENDING', GETDATE()); SELECT SCOPE_IDENTITY()"; 
+
+			$result = sqlsrv_query($conn, $insert); 
+			sqlsrv_next_result($result);
+	 		sqlsrv_fetch($result); 
+
+	 		$insertedID = sqlsrv_get_field($result, 0); 
+
+			if($result){
+
+	 			$query = sqlsrv_query($conn,"select * from template_approvers where template_id = '".$data['template_id']."' ");
+
+				while($qry = sqlsrv_fetch_array($query)){
+
+					sqlsrv_query($conn,"insert into approval_status (transaction_id,approver_id,alternate_approver_id,sequence_number,status,created_at) values (".$insertedID.",'".$qry['approver_id']."','".$qry['alternate_approver_id']."','".$qry['sequence_number']."','PENDING',GETDATE()) ");
+
+				}
+
+			}
+
+		}
+
+	}
+
+?>

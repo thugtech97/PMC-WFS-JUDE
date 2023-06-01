@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class CancelledNotification extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public $requestor;
+    public $cancelledby;
+
+    /**
+     * Create a new message instance.
+     *
+     * @param $setting
+     * @param $user
+     * @param $token
+     */
+    // public function __construct($user,$setting)
+    public function __construct($requestor, $cancelledby)
+    {
+        $this->requestor = $requestor;
+        $this->cancelledby = $cancelledby;
+    }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        return $this->view('mail.canceled.next-approver')
+            ->text('mail.canceled.next-approver_plain')
+            ->subject('OREM Cancelled Notification');
+    }
+}

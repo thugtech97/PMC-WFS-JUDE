@@ -1,0 +1,329 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\ApprovalStatus;
+use App\Transaction;
+use App\Mail\NextApproverNotification;
+use App\Mail\CancelledNotification;
+use App\Mail\OnholdNotification;
+
+use GuzzleHttp\Client;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+
+use App\User;
+use DB;
+use Illuminate\Support\Facades\Log;
+
+class ApprovalStatusController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\ApprovalStatus  $approvalStatus
+     * @return \Illuminate\Http\Response
+     */
+    public function show(ApprovalStatus $approvalStatus)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\ApprovalStatus  $approvalStatus
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(ApprovalStatus $approvalStatus)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\ApprovalStatus  $approvalStatus
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, ApprovalStatus $approvalStatus)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\ApprovalStatus  $approvalStatus
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(ApprovalStatus $approvalStatus)
+    {
+        //
+    }
+
+    public function update_request_status(Request $request)
+    {       
+
+        $transaction = Transaction::find($request->rid);
+
+         $qry = ApprovalStatus::where('transaction_id',$request->rid)
+            ->where('approver_id',$request->uid)
+            ->where('status','PENDING')
+            ->get();
+           
+           if(count($qry)>1){
+
+            $rs =  DB::table('approval_status')->where('transaction_id',$request->rid)
+                ->where('approver_id',$request->uid)
+                ->orderBy('sequence_number','asc')->first();
+
+            $next =  DB::table('approval_status')->where('transaction_id',$request->rid)
+                ->where('approver_id','>',$request->uid)
+                ->first();
+
+            $requestor = Transaction::where('id',$request->rid)->first();                
+
+            ApprovalStatus::where('transaction_id',$request->rid)
+            ->where('approver_id',$request->uid)
+            ->where('status','PENDING') 
+            ->where('sequence_number',$rs->sequence_number)
+            ->update([
+                'status' => $request->rstatus,
+                'remarks' => $request->remarks
+            ]);
+
+            
+               if($request->rstatus=='CANCELLED'){
+                    ApprovalStatus::where('transaction_id',$request->rid)            
+                    ->where('status','PENDING')            
+                    ->update([
+                        'status' => 'CANCELLED'                
+                    ]);
+
+                    Log::info($requestor->email);           
+
+                             
+                    Mail::to($requestor->email)->send(new CancelledNotification($requestor));
+                }
+
+                if($request->rstatus=='HOLD'){
+                    ApprovalStatus::where('transaction_id',$request->rid)            
+                    ->where('status','PENDING')            
+                    ->update([
+                        'status' => 'HOLD'                
+                    ]);
+
+                    Log::info($requestor->email);           
+
+                             
+                    Mail::to($requestor->email)->send(new OnholdNotification($requestor));
+                }  
+
+                 if($request->rstatus=='APPROVED'){
+
+                   $receiver = User::where('id', $next->approver_id)->first(); 
+
+                    //Log::info($receiver);           
+                             
+
+                    Mail::to($receiver->email)->send(new NextApproverNotification($receiver));
+
+                }           
+
+
+           } else {  
+
+           $requestor = Transaction::where('id',$request->rid)->first();           
+                
+            ApprovalStatus::where('transaction_id',$request->rid)
+            ->where('approver_id',$request->uid)
+            ->where('status','PENDING')            
+            ->update([
+                'status' => $request->rstatus,
+                'remarks' => $request->remarks
+            ]);             
+
+            if($request->rstatus=='CANCELLED'){
+                ApprovalStatus::where('transaction_id',$request->rid)            
+                ->where('status','PENDING')        
+                ->orWhere('status','HOLD')    
+                ->update([
+                    'status' => 'CANCELLED'                
+                ]);
+
+                $cancelled = ApprovalStatus::where('transaction_id',$request->rid)->where('status','CANCELLED')->first();
+                $cancelledby = User::where('id',$cancelled->approver_id)->first();
+
+                // Log::info($requestor->email);  
+                         
+                Mail::to($requestor->email)->send(new CancelledNotification($requestor,$cancelledby));
+            }
+
+            if($request->rstatus=='HOLD'){
+                ApprovalStatus::where('transaction_id',$request->rid)            
+                ->where('status','PENDING')            
+                ->update([
+                    'status' => 'HOLD'                
+                ]);
+
+                $onhold = ApprovalStatus::where('transaction_id',$request->rid)->where('status','HOLD')->first();
+                $onholdby = User::where('id',$onhold->approver_id)->first();
+
+                // Log::info($requestor->email);           
+                         
+
+                Mail::to($requestor->email)->send(new OnholdNotification($requestor,$onholdby));
+            }
+
+            if($request->rstatus=='APPROVED'){
+
+                $qry2 = ApprovalStatus::where('transaction_id',$request->rid) 
+                ->where('approver_id',$request->uid)           
+                ->where('status','HOLD')            
+                ->get();
+
+                if(count($qry2)>0){                    
+
+                    $rs2 =  DB::table('approval_status')->where('transaction_id',$request->rid)
+                    ->where('approver_id',$request->uid)
+                    ->where('status','HOLD')  
+                    ->orderBy('sequence_number','asc')->first();
+
+                    ApprovalStatus::where('transaction_id',$request->rid)
+                    ->where('approver_id',$request->uid)
+                    ->where('status','HOLD') 
+                    ->where('sequence_number',$rs2->sequence_number)
+                    ->update([
+                        'status' => $request->rstatus,
+                        'remarks' => $request->remarks
+                    ]);
+
+                    ApprovalStatus::where('transaction_id',$request->rid)            
+                    ->where('sequence_number','>',$rs2->sequence_number)
+                    ->where('status','HOLD')            
+                    ->update([
+                        'status' => 'PENDING'                
+                    ]);
+
+                }
+
+                 $next =  DB::table('approval_status')->where('transaction_id',$request->rid)
+                ->where('approver_id','>',$request->uid)
+                ->first();
+
+
+                 $receiver = User::where('id', $next->approver_id)->first(); 
+
+                //Log::info($receiver);                           
+                         
+                Mail::to($receiver->email)->send(new NextApproverNotification($receiver));
+
+            }
+
+           }
+
+        //check if last approver.
+        //if last approver, about the transaction header status base on the selected action(approve,hold,cancel)
+        //if not the last, if approver approved the request, update transaction header status into IN-PROGRESS
+        //if not the last and hold or cancelled the request, update transaction header status into Hold or cancelled       
+        $transaction = Transaction::find($request->rid);
+
+        $qry2 = ApprovalStatus::where('transaction_id',$request->rid)->where('approver_id', $request->uid)->get();
+
+        if(count($qry2)>1) {
+
+             $rs2 =  DB::table('approval_status')->where('transaction_id',$request->rid)
+                ->where('approver_id',$request->uid)
+                ->orderBy('sequence_number','asc')->first();
+
+            $next = DB::table('approval_status')->where('transaction_id',$request->rid)
+                ->where('approver_id','>',$request->uid)->first();
+                
+
+                if($rs2->approver_id == $request->uid){
+
+                    if($request->rstatus == 'CANCELLED'){
+
+                        $transaction->update(['status' => 'CANCELLED']);
+
+                    }elseif($request->rstatus == 'HOLD') {
+
+                        $transaction->update(['status' => 'HOLD']);
+
+                    } else {
+
+                        $transaction->update(['status' => 'IN-PROGRESS']);                        
+
+                    }
+
+                }
+
+        } else {
+
+            $qry2 = ApprovalStatus::where('transaction_id',$request->rid)->latest('sequence_number')->first();
+
+            $next = DB::table('approval_status')->where('transaction_id',$request->rid)
+                ->where('approver_id','>',$request->uid)->first();
+                       
+
+            if($qry2->approver_id == $request->uid){
+
+                 $transaction->update(['status' => $request->rstatus]);
+
+            } else {
+
+                if($request->rstatus != 'APPROVED'){
+
+                    $transaction->update(['status' => $request->rstatus]);
+
+                } else {
+
+                    $transaction->update(['status' => 'IN-PROGRESS']);
+                    
+                }
+            }
+        }
+
+        // $receiver = User::where('id', $next->approver_id)->first(); 
+
+        // Log::info($receiver->email);           
+                 
+        // Mail::to($receiver->email)->send(new NextApproverNotification($receiver));
+                       
+        return response()->json();          
+    }
+}

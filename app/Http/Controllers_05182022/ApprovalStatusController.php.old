@@ -1,0 +1,318 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\ApprovalStatus;
+use App\Transaction;
+use App\Mail\NextApproverNotification;
+
+use GuzzleHttp\Client;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+
+
+use DB;
+use Illuminate\Support\Facades\Log;
+
+class ApprovalStatusController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\ApprovalStatus  $approvalStatus
+     * @return \Illuminate\Http\Response
+     */
+    public function show(ApprovalStatus $approvalStatus)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\ApprovalStatus  $approvalStatus
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(ApprovalStatus $approvalStatus)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\ApprovalStatus  $approvalStatus
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, ApprovalStatus $approvalStatus)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\ApprovalStatus  $approvalStatus
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(ApprovalStatus $approvalStatus)
+    {
+        //
+    }
+
+    public function update_request_status(Request $request)
+    {
+        //update status either approved,hold,cancelled
+        // $qry = ApprovalStatus::where('transaction_id',$request->rid)
+        //     ->where('approver_id',$request->uid)
+        //     ->update([
+        //         'status' => $request->rstatus,
+        //         'remarks' => $request->remarks
+        //     ]);
+
+        $transaction = Transaction::find($request->rid);
+
+         $qry = ApprovalStatus::where('transaction_id',$request->rid)
+            ->where('approver_id',$request->uid)
+            ->where('status','PENDING')
+            ->get();
+           
+           if(count($qry)>1){
+
+            $rs =  DB::table('approval_status')->where('transaction_id',$request->rid)
+                ->where('approver_id',$request->uid)
+                ->orderBy('sequence_number','asc')->first();
+
+            ApprovalStatus::where('transaction_id',$request->rid)
+            ->where('approver_id',$request->uid)
+            ->where('status','PENDING') 
+            ->where('sequence_number',$rs->sequence_number)
+            ->update([
+                'status' => $request->rstatus,
+                'remarks' => $request->remarks
+            ]);
+            
+
+               if($request->rstatus=='CANCELLED'){
+                    ApprovalStatus::where('transaction_id',$request->rid)            
+                    ->where('status','PENDING')            
+                    ->update([
+                        'status' => 'CANCELLED'                
+                    ]);
+                }
+
+                if($request->rstatus=='HOLD'){
+                    ApprovalStatus::where('transaction_id',$request->rid)            
+                    ->where('status','PENDING')            
+                    ->update([
+                        'status' => 'HOLD'                
+                    ]);
+                }
+
+
+           } else {            
+                
+            ApprovalStatus::where('transaction_id',$request->rid)
+            ->where('approver_id',$request->uid)
+            ->where('status','PENDING')            
+            ->update([
+                'status' => $request->rstatus,
+                'remarks' => $request->remarks
+            ]);             
+
+            if($request->rstatus=='CANCELLED'){
+                ApprovalStatus::where('transaction_id',$request->rid)            
+                ->where('status','PENDING')        
+                ->orWhere('status','HOLD')    
+                ->update([
+                    'status' => 'CANCELLED'                
+                ]);
+            }
+
+            if($request->rstatus=='HOLD'){
+                ApprovalStatus::where('transaction_id',$request->rid)            
+                ->where('status','PENDING')            
+                ->update([
+                    'status' => 'HOLD'                
+                ]);
+            }
+
+            if($request->rstatus=='APPROVED'){
+
+                $qry2 = ApprovalStatus::where('transaction_id',$request->rid) 
+                ->where('approver_id',$request->uid)           
+                ->where('status','HOLD')            
+                ->get();
+
+                if(count($qry2)>0){                    
+
+                    $rs2 =  DB::table('approval_status')->where('transaction_id',$request->rid)
+                    ->where('approver_id',$request->uid)
+                    ->where('status','HOLD')  
+                    ->orderBy('sequence_number','asc')->first();
+
+                    ApprovalStatus::where('transaction_id',$request->rid)
+                    ->where('approver_id',$request->uid)
+                    ->where('status','HOLD') 
+                    ->where('sequence_number',$rs2->sequence_number)
+                    ->update([
+                        'status' => $request->rstatus,
+                        'remarks' => $request->remarks
+                    ]);
+
+                    ApprovalStatus::where('transaction_id',$request->rid)            
+                    ->where('sequence_number','>',$rs2->sequence_number)
+                    ->where('status','HOLD')            
+                    ->update([
+                        'status' => 'PENDING'                
+                    ]);
+
+                }
+
+            }
+
+           }
+
+        //check if last approver.
+        //if last approver, about the transaction header status base on the selected action(approve,hold,cancel)
+        //if not the last, if approver approved the request, update transaction header status into IN-PROGRESS
+        //if not the last and hold or cancelled the request, update transaction header status into Hold or cancelled
+        // $qry2 = ApprovalStatus::where('transaction_id',$request->rid)->latest('approver_id')->first();
+        // $qry2 = ApprovalStatus::where('transaction_id',$request->rid)->latest('sequence_number')->first();
+        $transaction = Transaction::find($request->rid);
+
+        $qry2 = ApprovalStatus::where('transaction_id',$request->rid)->where('approver_id', $request->uid)->get();
+
+        if(count($qry2)>1) {
+
+             $rs2 =  DB::table('approval_status')->where('transaction_id',$request->rid)
+                ->where('approver_id',$request->uid)
+                ->orderBy('sequence_number','asc')->first();
+
+            $next = DB::table('approval_status')->where('transaction_id',$request->rid)
+                ->where('approver_id','>',$request->uid)->first();
+                
+
+            // if($rs2->approver_id == $request->uid){
+
+            //     if($rs2->status != 'CANCELLED') {
+
+            //     $transaction->update(['status' => 'IN-PROGRESS']);
+
+            //     } else {
+
+            //         $transaction->update(['status' => 'CANCELLED']);
+            //     }
+
+            // } else {
+                
+            //     if($rs2->status != 'APPROVED'){
+
+            //         $transaction->update(['status' => $rs2->status]);
+
+            //     } else {
+            //         $transaction->update(['status' => 'IN-PROGRESS']);
+            //     }
+                
+            // }
+
+                if($rs2->approver_id == $request->uid){
+
+                    if($request->rstatus == 'CANCELLED'){
+
+                        $transaction->update(['status' => 'CANCELLED']);
+
+                    }elseif($request->rstatus == 'HOLD') {
+
+                        $transaction->update(['status' => 'HOLD']);
+
+                    } else {
+
+                        $transaction->update(['status' => 'IN-PROGRESS']);
+                    }
+
+                }
+
+        } else {
+
+            $qry2 = ApprovalStatus::where('transaction_id',$request->rid)->latest('sequence_number')->first();
+
+            $next = DB::table('approval_status')->where('transaction_id',$request->rid)
+                ->where('approver_id','>',$request->uid)->first();
+            
+            // if($qry2->approver_id == $request->uid){
+
+            //     $transaction->update(['status' => $request->rstatus]);
+
+            // } else {
+
+            //     if($request->rstatus != 'APPROVED'){
+
+            //         $transaction->update(['status' => $request->rstatus]);
+
+            //     } else {
+
+            //         $transaction->update(['status' => 'IN-PROGRESS']);
+            //     }
+                
+            // }
+
+            if($qry2->approver_id == $request->uid){
+
+                 $transaction->update(['status' => $request->rstatus]);
+
+            } else {
+
+                if($request->rstatus != 'APPROVED'){
+
+                    $transaction->update(['status' => $request->rstatus]);
+
+                } else {
+
+                    $transaction->update(['status' => 'IN-PROGRESS']);
+                }
+            }
+        }
+
+        // $receiver = User::where('id', $next->approver_id)->first();          
+
+        // $sender = "wfs@philsaga.com";              
+
+        // Mail::to($receiver['email'])->send(new NextApproverNotification($receiver, $sender));
+                       
+        return response()->json();          
+    }
+}
