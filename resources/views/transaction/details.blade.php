@@ -128,7 +128,7 @@
                                             <div class="float-md-right">
                                                 <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}' , '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
 
-                                                @if ($data->details!='OSTR')
+                                                @if ($data->details=='OSTR')
                                                 <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
                                                 @endif
 
@@ -156,7 +156,7 @@
                                             </div>
                                             <div class="float-md-right">
                                                 <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                                 @if ($data->details!='OSTR')
+                                                 @if ($data->details=='OSTR')
                                                 <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
                                                 @endif
                                                 <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
@@ -183,7 +183,7 @@
                                             </div>
                                             <div class="float-md-right">
                                                 <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                                 @if ($data->details!='OSTR')
+                                                 @if ($data->details=='OSTR')
                                                 <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
                                                 @endif
                                                 <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
@@ -210,7 +210,7 @@
                                             </div>
                                             <div class="float-md-right">
                                                 <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                                 @if ($data->details!='OSTR')
+                                                 @if ($data->details=='OSTR')
                                                 <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
                                                 @endif
                                                 <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
@@ -237,7 +237,7 @@
                                             </div>
                                             <div class="float-md-right">
                                                 <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                             @if ($data->details!='OSTR')
+                                             @if ($data->details=='OSTR')
                                                 <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
                                             @endif
                                                 <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
@@ -264,7 +264,7 @@
                                             </div>
                                             <div class="float-md-right">
                                                 <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                             @if ($data->details!='OSTR')
+                                             @if ($data->details=='OSTR')
                                                 <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
                                             @endif
                                                 <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
@@ -291,7 +291,7 @@
                                             </div>
                                             <div class="float-md-right">
                                                 <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                                 @if ($data->details!='OSTR')
+                                                 @if ($data->details=='OSTR')
                                                 <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
                                                 @endif
                                                 <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
@@ -318,7 +318,7 @@
                                             </div>
                                             <div class="float-md-right">
                                                 <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                                 @if ($data->details!='OSTR')
+                                                 @if ($data->details=='OSTR')
                                                 <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
                                                 @endif
                                                 <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>

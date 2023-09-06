@@ -14,7 +14,7 @@ class ApprovalStatus extends Model
 {
     public $table='approval_status';
 
-    protected $fillable = ['transaction_id', 'approver_id', 'alternate_approver_id', 'sequence_number', 'status','remarks','current_seq','history','updated_last_by','is_alternate','is_current'];
+    protected $fillable = ['transaction_id', 'approver_id', 'alternate_approver_id', 'sequence_number', 'status','remarks','current_seq','history','updated_last_by','is_alternate','is_current','updated_last_by_name'];
 
     public function user()
     {

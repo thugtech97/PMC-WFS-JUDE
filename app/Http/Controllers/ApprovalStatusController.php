@@ -122,6 +122,7 @@ class ApprovalStatusController extends Controller
                         'status'    => $request->rstatus ,
                         'remarks'   => $request->remarks , 
                         'updated_last_by'   => auth()->user()->username ,
+                        'updated_last_by_name'   => auth()->user()->name ,
                         'history'   => is_null($approval->history) ? auth()->user()->username ." ". \Carbon\Carbon::now()->format('Y-m-d H:i:s') . " " .$request->remarks . " ": $approval->history . " > " . auth()->user()->username ." ". \Carbon\Carbon::now()->format('Y-m-d H:i:s') . " " .$request->remarks ,
                         'is_alternate'      => auth()->user()->is_alternate ? 1:0                        
                     ]);
@@ -181,6 +182,7 @@ class ApprovalStatusController extends Controller
                 'remarks'           => $request->remarks , 
                 'current_seq'       => $request->curr_seq , 
                 'updated_last_by'   => auth()->user()->username ,
+                'updated_last_by_name'   => auth()->user()->name ,
                 'history'           => is_null($curr_seq->history) ? auth()->user()->username ." ". \Carbon\Carbon::now()->format('Y-m-d H:i:s') . " " .$request->remarks . " ": $curr_seq->history . " > " . auth()->user()->username ." ". \Carbon\Carbon::now()->format('Y-m-d H:i:s') . " " .$request->remarks ,
                 'is_alternate'      => auth()->user()->is_alternate ? 1:0,
                 'is_current' => 0
