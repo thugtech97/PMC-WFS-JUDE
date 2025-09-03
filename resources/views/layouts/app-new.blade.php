@@ -96,6 +96,63 @@
         .nav-card.active b {
             color: blue !important;
         }
+
+        .menu-container {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        .menu-item {
+            position: relative;
+        }
+
+        .menu-link {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-weight: 600;
+            color: #333;
+            transition: color 0.2s;
+        }
+
+        .menu-link:hover {
+            color: #5E17EB;
+        }
+
+        .sub-menu {
+            list-style: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px 0;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1000;
+        }
+
+        .sub-menu .menu-link {
+            padding: 8px 15px;
+            font-weight: 500;
+            color: #333;
+            white-space: nowrap;
+        }
+
+        .sub-menu .menu-link:hover {
+            background: #f7f7f7;
+            color: #5E17EB;
+        }
+        
+        .menu-item:hover > .sub-menu {
+            display: block;
+        }
+
     </style>
     @yield('pagecss')
 </head>
@@ -116,27 +173,44 @@
 
                             <!-- Logo
       ============================================= -->
-                            <div id="logo" class="me-lg-5">
-                                <a href="#"><img
-                                        src="{{ asset('assets_new/demos/landing-2/images/wfs-logo.png') }}"
-                                        alt="webfocus Logo" class="py-3" style="height: 62px;"></a>
-                            </div><!-- #logo end -->
+                            <div class="d-flex justify-content-start align-items-center">
+                                <img class="mr-2" height="40" src="{{ asset('assets/img/pmc-logo-solo.png') }}">
+                                <h3 class="main-heading-text wfs-text-default">WORK<span class="primary-color">FLOW</span> SYSTEM</h3>
+                            </div>
 
                             <!-- Primary Navigation
       ============================================= -->
                             <nav class="primary-menu">
 
                                 <ul class="menu-container">
-                                    <li class="menu-item"><a class="menu-link text-uppercase" href="{{ route('transactions.index_new', ['details' => 'OREM']) }}">
+                                    <!-- Transactions with dropdown -->
+                                    <li class="menu-item">
+                                        <a class="menu-link text-uppercase" href="javascript:void(0)">
                                             <div>Transactions</div>
-                                        </a></li>
-                                    <li class="menu-item"><a class="menu-link text-uppercase" href="{{ route('transactions.history')}}">
-                                            <div>HISTORY</div>
-                                        </a></li>
-                                    <li class="menu-item"><a class="menu-link text-uppercase" href="javascript:void(0)">
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'OREM']) }}">OREM</a></li>
+                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'IMP']) }}">IMP</a></li>
+                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'OSTR']) }}">OSTR</a></li>
+                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'HK']) }}">Housekeeping</a></li>
+                                        </ul>
+                                    </li>
+
+                                    <!-- History -->
+                                    <li class="menu-item">
+                                        <a class="menu-link text-uppercase" href="{{ route('transactions.history') }}">
+                                            <div>History</div>
+                                        </a>
+                                    </li>
+
+                                    <!-- Documentation -->
+                                    <li class="menu-item">
+                                        <a class="menu-link text-uppercase" href="javascript:void(0)">
                                             <div>Documentation</div>
-                                        </a></li>
+                                        </a>
+                                    </li>
                                 </ul>
+
 
                                 <div class="dropdown">
                                     <a class="dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
