@@ -1,9 +1,7 @@
 <?php 
 		
-	// $serverName = "172.16.20.28";
-	$serverName = "HO5CBAEFD50713L";	
-	// $connectionInfo = array( "Database"=>"PMC-WFS", "UID"=>"sa", "PWD"=>"philsaga" );
-$connectionInfo = array( "Database"=>"PMC-WFS", "UID"=>"sa", "PWD"=>"@Temp123!" );
+	$serverName = "172.16.20.43";
+	$connectionInfo = array( "Database"=>"PMC-WFS", "UID"=>"apps_wfs", "PWD"=>"Phahd2fe" );
 	$conn = sqlsrv_connect($serverName, $connectionInfo);
 
 ?>

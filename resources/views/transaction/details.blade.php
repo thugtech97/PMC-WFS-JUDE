@@ -1,27 +1,72 @@
-@extends('layouts.app')
+@extends('layouts.app-new')
 
 @section('pagecss')
 <link rel="stylesheet" href="{{ asset('assets/css/dialog/sweetalert2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/dialog/dialog.css') }}">
 @endsection
-
+<style type="text/css"> 
+    body {
+        overflow-x: hidden; 
+        widows: 100%
+    }
+    .card-float {
+        width: 97% !important;
+        margin: auto !important;
+    }
+    .lbl-card.lbl-card-pill {
+        line-height: 1.5 !important;
+        display: flex !important;
+        gap: 4px;
+        width: fit-content;
+        padding: 5px 10px 3px 10px !important;
+        position: absolute;
+        top: -12px;
+        right: 12px;
+        margin: 0px !important;
+    }
+    .scroll-max {
+        overflow: auto;
+        padding-top: 12px;
+    }
+</style>
 @section('content')
-<div class="page-header">
-    <div class="row align-items-end">
+<div class="page-header" style="margin-bottom: 15px;">
+    <div class="row align-items-center px-3">
+        <!-- Header Card -->
         <div class="col-lg-8">
-            <div class="page-header-title">
-                <i class="ik ik-file-text bg-blue"></i>
-                <div class="d-inline">
-                    <h5>Transaction Details</h5>
-                    <span></span>
+            <div class="card shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <span class="me-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none"
+                            viewBox="0 0 24 24">
+                            <path stroke="#5E17EB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 2.221V7H4.221a2 2 0 0 1 .365-.5L8.5 2.586A2 2 0 0 1 9 2.22ZM11 2v5a2 2 0 0 1-2 2H4v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-7ZM8 16a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1Zm1-5a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9Z" />
+                        </svg>
+                    </span>
+                    <div>
+                        <h5 class="card-title mb-1"><b>Transaction Details</b></h5>
+                        <p class="card-text text-muted mb-0" style="font-size:14px;">
+                            Detailed information of this transaction.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-4">
+
+        <!-- Breadcrumbs -->
+        <div class="col-lg-4 d-flex align-items-center justify-content-lg-end mt-3 mt-lg-0">
             <nav class="breadcrumb-container" aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="#">Transactions</a>
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item d-flex align-items-center">
+                        <span role="button" style="cursor:pointer;"
+                            onclick="window.location.href='{{ route('transactions.index_new', ['details' => 'OREM']) }}'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                viewBox="0 0 24 24" class="me-1" style="transform: translateY(-2px);">
+                                <path stroke="#5E17EB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 3v4a1 1 0 0 1-1 1H5m4 10v-2m3 2v-6m3 6v-3m4-11v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z" />
+                            </svg>
+                        </span>
+                        <a href="{{ route('transactions.index_new', ['details' => 'OREM']) }}">Transactions</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Details</li>
                 </ol>
@@ -30,340 +75,389 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-12 col-md-7">
-        <div class="card">
-            <div class="tab-content" id="pills-tabContent">
-                <div class="tab-pane show active" id="last-month" role="tabpanel" aria-labelledby="pills-profile-tab">
-                    <div class="card-body">
-                        <h4 class="mt-10">Type : {{ $data->details}}</h4>
-                        <div class="form-group">
-                            <div class="row mt-20">
-                                <div class="col-md-3 col-6"> <strong>Requestor</strong>
-                                    <br>
-                                    <p class="text-muted">{{$data->requestor}}</p>
-                                </div>
-                                <div class="col-md-3 col-6"> <strong>Email</strong>
-                                    <br>
-                                    <p class="text-muted">{{ $data->email }}</p>
-                                </div>
-                                <div class="col-md-3 col-6"> <strong>Date Submitted</strong>
-                                    <br>
-                                    <p class="text-muted">{{ $data->created_at }}</p>
-                                </div>
-                                <div class="col-md-3 col-6"> <strong>Status</strong>
-                                    <br>
-                                    <p class="text-muted">{{$data->status}}</p>
-                                </div>
+<div class="row pl-3" style="padding-right: 35px;">
+    <div class="col-lg-12 d-flex" style="gap: 15px;">
+        <div class="col-6" style="padding: 0px;">
+            <div class="card box-shadow border-medium" style="height: fit-content; margin-bottom: 15px;">
+                <div class="card-body" style="padding: 5px 20px;">
+                    <h4 class="mt-10"><b style="font-size: 20px; font-weight: 900 !important;">Transaction Type : {{ $data->details}}</b></h4>
+                    <div class="form-group">
+                        <div class="row mt-20">
+                            <div class="col-4"> <span class="text-muted">Requestor</span>
+                                <br>
+                                <p><b>{{$data->requestor}}</b></p>
                             </div>
-                            <div class="row mt-20">
-                                <div class="col-md-3 col-6"> <strong>Transaction #</strong>
-                                    <br>
-                                    <p class="text-muted">{{$data->transid}}</p>
-                                </div>
-                                <div class="col-md-3 col-6"> <strong>Amount</strong>
-                                    <br>
-                                    <p class="text-muted">{{ number_format($data->totalamount,2) }}</p>
-                                </div>
+                            <div class="col-4"> <span class="text-muted">Email</span>
+                                <br>
+                                <p><b>{{ $data->email }}</b></p>
+                            </div>
+                            <div class="col-4"> <span class="text-muted">Date Submitted</span>
+                                <br>
+                                <p><b>{{ $data->created_at }}</b></p>
                             </div>
                         </div>
+                        <div class="row mt-20">
+                            <div class="col-4"> <span class="text-muted">Transaction #</span>
+                                <br>
+                                <p><b>{{$data->transid}}</b></p>
+                            </div>
+                            <div class="col-4"> <span class="text-muted">Amount</span>
+                                <br>
+                                <p><b>{{ number_format($data->totalamount,2) }}</b></p>
+                            </div>
+                            <div class="col-4"> <span class="text-muted">Status</span>
+                                <br>
+                                <p><b style="font-weight: 900">{{$data->status}}</b></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">To view the whole transaction details. Please click this <a href="{{$data->source_url}}" target="_blank" class="text-blue"><strong>link</strong></a>.</div>
+                </div>
 
-                        <div class="alert alert-info">To view the whole transaction details. Please click this <a href="{{$data->source_url}}" target="_blank" class="text-blue"><strong>link</strong></a>.</div>
-                        <hr>
-                        <h5 class="mt-30">Approvers</h5> {{-- 1= {{$approverstatus->status ?? 'NONE'}} - 2= {{$data->status ?? 'NONE'}} - 3= {{$previous->status ?? 'NONE'}} --}}
-                        <div class="row clearfix">
+            </div> 
+            
+            @php $nxtapprover = \App\ApprovalStatus::next_approver($data->id,$approverstatus->sequence_number); @endphp
+
+            @if($previous)
+
+            @if($approverstatus->status == 'PENDING' && $data->status =='CANCELLED' && $previous->status=='APPROVED')
+            <div class="row" id="approverBtn">
+                <div class="col-md-12">
+                    <div class="card box-shadow border-medium">
+                        <div class="card-body">
+                            <form class="forms-sample">
+                                {{-- <div class="form-group">
+                                    <label for="exampleTextarea1">Old Remarks</label>
+                                    <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
+                                </div> --}}
+                                <div class="form-group">
+                                    <label for="exampleTextarea1"><b>Remarks</b></label>
+                                    <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                    <input type="hidden" id="position" value="{{ Auth::user()->position }}">
+                                </div>
+                                <div class="float-md-right">
+                                    <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Approve</button>
+                                    
+                                    {{-- @if ($data->details=='OSTR') --}}
+                                    <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Hold</button>
+                                    {{-- @endif --}}
+
+                                    <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Disapprove</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @elseif($approverstatus->status == 'HOLD' && $data->status =='HOLD' && $previous->status=='APPROVED')
+            <div class="row" id="approverBtn">
+                <div class="col-md-12">
+                    <div class="card box-shadow border-medium">
+                        <div class="card-body">
+                            <form class="forms-sample">
+                                {{-- <div class="form-group">
+                                    <label for="exampleTextarea1">Old Remarks</label>
+                                    <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
+                                </div> --}}
+                                <div class="form-group">
+                                    <label for="exampleTextarea1"><b>Remarks</b></label>
+                                    <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                    <input type="hidden" id="position" value="{{ Auth::user()->position }}">
+                                </div>
+                                <div class="float-md-right">
+                                    <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Approve</button>
+                                     {{-- @if ($data->details=='OSTR') --}}
+                                    <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Hold</button>
+                                    {{-- @endif --}}
+                                    <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Disapprove</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @elseif($approverstatus->status == 'HOLD' && $data->status =='HOLD' && $previous->status=='HOLD')
+            <div class="row" id="approverBtn">
+                <div class="col-md-12">
+                    <div class="card box-shadow border-medium">
+                        <div class="card-body">
+                            <form class="forms-sample">
+                                {{-- <div class="form-group">
+                                    <label for="exampleTextarea1">Old Remarks</label>
+                                    <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
+                                </div> --}}
+                                <div class="form-group">
+                                    <label for="exampleTextarea1"><b>Remarks</b></label>
+                                    <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                    <input type="hidden" id="position" value="{{ Auth::user()->position }}">
+                                </div>
+                                <div class="float-md-right">
+                                    <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Approve</button>
+                                     {{-- @if ($data->details=='OSTR') --}}
+                                    <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Hold</button>
+                                    {{-- @endif --}}
+                                    <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Disapprove</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @elseif($approverstatus->status == 'PENDING' && $data->status =='IN-PROGRESS' && $previous->status=='APPROVED')
+            <div class="row" id="approverBtn">
+                <div class="col-md-12">
+                    <div class="card box-shadow border-medium">
+                        <div class="card-body">
+                            <form class="forms-sample">
+                                <div class="form-group">
+                                    {{-- <div class="form-group">
+                                        <label for="exampleTextarea1">Old Remarks</label>
+                                        <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
+                                    </div> --}}
+                                    <div class="">
+                                        <label for="exampleTextarea1"><b>Remarks</b></label>
+                                        <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                        <input type="hidden" id="position" value="{{ Auth::user()->position }}">
+                                    </div>
+                                </div>
+                                <div class="float-md-right">
+                                    <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Approve</button>
+                                     {{-- @if ($data->details=='OSTR') --}}
+                                    <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Hold</button>
+                                    {{-- @endif --}}
+                                    <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Disapprove</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @elseif($approverstatus->status == 'HOLD' && $data->status =='HOLD' && $previous->status=='APPROVED')
+            <div class="row" id="approverBtn">
+                <div class="col-md-12">
+                    <div class="card box-shadow border-medium">
+                        <div class="card-body">
+                            <form class="forms-sample">
+                                <div class="form-group">
+                                    {{-- <div class="form-group">
+                                        <label for="exampleTextarea1">Old Remarks</label>
+                                        <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
+                                    </div> --}}
+                                    <label for="exampleTextarea1"><b>Remarks</b></label>
+                                    <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                    <input type="hidden" id="position" value="{{ Auth::user()->position }}">
+                                </div>
+                                <div class="float-md-right">
+                                    <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Approve</button>
+                                 {{-- @if ($data->details=='OSTR') --}}
+                                    <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Hold</button>
+                                {{-- @endif --}}
+                                    <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Disapprove</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @elseif($approverstatus->status == 'PENDING' && $data->status =='APPROVED' && $previous->status=='APPROVED')
+            <div class="row" id="approverBtn">
+                <div class="col-md-12">
+                    <div class="card box-shadow border-medium">
+                        <div class="card-body">
+                            <form class="forms-sample">
+                                <div class="form-group">
+                                    {{-- <div class="form-group">
+                                        <label for="exampleTextarea1">Old Remarks</label>
+                                        <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
+                                    </div> --}}
+                                    <label for="exampleTextarea1"><b>Remarks</b></label>
+                                    <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                    <input type="hidden" id="position" value="{{ Auth::user()->position }}">
+                                </div>
+                                <div class="float-md-right">
+                                    <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Approve</button>
+                                 {{-- @if ($data->details=='OSTR') --}}
+                                    <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Hold</button>
+                                {{-- @endif --}}
+                                    <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Disapprove</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @elseif($approverstatus->status == 'HOLD' && $data->status =='APPROVED' && $previous->status=='APPROVED')
+            <div class="row" id="approverBtn">
+                <div class="col-md-12">
+                    <div class="card box-shadow border-medium">
+                        <div class="card-body">
+                            <form class="forms-sample">
+                                {{-- <div class="form-group">
+                                    <label for="exampleTextarea1">Old Remarks</label>
+                                    <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
+                                </div> --}}
+                                <div class="form-group">
+                                    <label for="exampleTextarea1"><b>Remarks</b></label>
+                                    <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                    <input type="hidden" id="position" value="{{ Auth::user()->position }}">
+                                </div>
+                                <div class="float-md-right">
+                                    <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Approve</button>
+                                     {{-- @if ($data->details=='OSTR') --}}
+                                    <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Hold</button>
+                                    {{-- @endif --}}
+                                    <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Disapprove</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @elseif($approverstatus->status == 'HOLD' && $data->status =='IN-PROGRESS' && $previous->status=='HOLD')
+            <div class="row" id="approverBtn">
+                <div class="col-md-12">
+                    <div class="card box-shadow border-medium">
+                        <div class="card-body">
+                            <form class="forms-sample">
+                                {{-- <div class="form-group">
+                                    <label for="exampleTextarea1">Old Remarks</label>
+                                    <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
+                                </div> --}}
+                                <div class="form-group">
+                                    <label for="exampleTextarea1"><b>Remarks</b></label>
+                                    <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                    <input type="hidden" id="position" value="{{ Auth::user()->position }}">
+                                </div>
+                                <div class="float-md-right">
+                                    <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Approve</button>
+                                     {{-- @if ($data->details=='OSTR') --}}
+                                    <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Hold</button>
+                                    {{-- @endif --}}
+                                    <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Disapprove</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @elseif($approverstatus->status == 'HOLD' && $data->status =='RESUBMITTED' && $previous->status=='APPROVED')
+            <div class="row" id="approverBtn">
+                <div class="col-md-12">
+                    <div class="card box-shadow border-medium">
+                        <div class="card-body">
+                            <form class="forms-sample">
+                                {{-- <div class="form-group">
+                                    <label for="exampleTextarea1">Old Remarks</label>
+                                    <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
+                                </div> --}}
+                                <div class="form-group">
+                                    <label for="exampleTextarea1"><b>Remarks</b></label>
+                                    <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                    <input type="hidden" id="position" value="{{ Auth::user()->position }}">
+                                </div>
+                                <div class="float-md-right">
+                                    <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Approve</button>
+                                     {{-- @if ($data->details=='OSTR') --}}
+                                    <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Hold</button>
+                                    {{-- @endif --}}
+                                    <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Disapprove</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+            @else
+
+            @if($currentuser && ( $currentuser->status=='PENDING' || $currentuser->status=='HOLD') )
+
+            <div class="row" id="approverBtn">
+                <div class="col-md-12">
+                    <div class="card box-shadow border-medium">
+                        <div class="card-body">
+                            <form class="forms-sample">
+
+                                {{-- <div class="form-group" @if($currentuser->status=='PENDING') style="display: none" @endif>
+                                    <label for="exampleTextarea1">Old Remarks</label>
+                                    <textarea class="form-control" id="oldremarks" rows="4" readonly>{{ $approverstatus->remarks }}</textarea>
+                                </div> --}}
+                                <div class="form-group">
+                                    <label for="exampleTextarea1"><b>Remarks</b></label>
+                                    <textarea class="form-control" id="remarks" rows="4"></textarea>
+                                    <input type="hidden" id="position" value="{{ Auth::user()->position }}">
+                                </div>
+                                <div class="float-md-right">
+                                    <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Approve</button>
+                                     {{-- @if ($data->details=='OSTR') --}}
+                                    <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Hold</button>
+                                   {{-- @endif --}}
+                                    <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}', '{{auth()->user()->name}}', '{{auth()->user()->position}}');">Disapprove</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+            @endif
+        </div>
+        <div class="col-3 card box-shadow border-medium" style="padding: 0px; height: fit-content;">
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane show active" id="last-month" role="tabpanel" aria-labelledby="pills-profile-tab">
+                    <div class="card-header wfs-bg" style="padding: 12px 15px 2px 15px;">
+                        <h6><b class="wfs-text-default" style="font-weight: 900 !important;">
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" style="transform: translate(2px, -3px);">
+                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11c.889-.086 1.416-.543 2.156-1.057a22.323 22.323 0 0 0 3.958-5.084 1.6 1.6 0 0 1 .582-.628 1.549 1.549 0 0 1 1.466-.087c.205.095.388.233.537.406a1.64 1.64 0 0 1 .384 1.279l-1.388 4.114M7 11H4v6.5A1.5 1.5 0 0 0 5.5 19v0A1.5 1.5 0 0 0 7 17.5V11Zm6.5-1h4.915c.286 0 .372.014.626.15.254.135.472.332.637.572a1.874 1.874 0 0 1 .215 1.673l-2.098 6.4C17.538 19.52 17.368 20 16.12 20c-2.303 0-4.79-.943-6.67-1.475"/>
+                            </svg>
+                        Approvers</b></h6> {{-- 1= {{$approverstatus->status ?? 'NONE'}} - 2= {{$data->status ?? 'NONE'}} - 3= {{$previous->status ?? 'NONE'}} --}}
+                    </div>
+                    <div class="card-body px-4" style="min-height: 460px;">
+                        <div class="row clearfix scroll-max scroll-style pr-1" style="max-height: 420px;">
                             @foreach($data->approvers as $a)
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card ticket-card">
-                                    <div class="card-body @if($data->status == 'CANCELLED' || $data->status == 'HOLD') @else(\App\ApprovalStatus::current_approver($data->id) == $a->approver_id) bg-default @endif">
-                                        <p id="app{{$a->approver_id}}" class="mb-30 @if($a->status == 'APPROVED') bg-success @elseif($a->status == 'HOLD') bg-warning @elseif($a->status == 'CANCELLED') bg-danger @else bg-secondary @endif lbl-card"><i id="ticon{{$a->approver_id}}" class="ik @if($a->status == 'APPROVED') ik-check-circle @elseif($a->status == 'HOLD') ik-alert-triangle @elseif($a->status == 'CANCELLED') ik-bell-off @else ik-info @endif "></i> <span id="app{{$a->approver_id}}_status">{{ $a->status }}</span></p>
+                            <div class="w-100">
+                                <div class="card ticket-card" style="margin-bottom: 22px;">
+                                    <div class="card-body box-style-class @if($data->status == 'CANCELLED' || $data->status == 'HOLD') @else(\App\ApprovalStatus::current_approver($data->id) == $a->approver_id) bg-default @endif">
 
-                                        <div class="text-center">
-                                            <img src="{{ asset('assets/img/users/user.png') }}" style="height: 70px;" alt="">
-                                            <br>
-                                            @if($a->approver_id == env('VERIFIER_ID'))
-                                            <p class="mb-0 d-inline-block">{{ $a->updated_last_by ? strtoupper($a->updated_last_by):''}}</p>
-                                            <br>
-                                            @else
-                                            @if( $a->is_alternate )
-                                            <p class="mb-0 d-inline-block">{{ strtoupper($a->updated_last_by) }} (ALT APPROVER)</p>
-                                            <br>
-                                            @endif
-                                            @endif
-                                            <p class="mb-0 d-inline-block">{{ strtoupper($a->user->name) }}</p>
-                                            <br>
-                                            <p class="mb-5 d-inline-block text-uppercase"><small>{{ $a->user->designation }}</small></p>
+                                        <p id="app{{$a->approver_id}}" class="@if($a->status == 'APPROVED') bg-success @elseif($a->status == 'HOLD') bg-warning @elseif($a->status == 'CANCELLED') bg-danger @else bg-secondary @endif lbl-card lbl-card-pill">
+                                            <i id="ticon{{$a->approver_id}}" class="ik @if($a->status == 'APPROVED') ik-check-circle @elseif($a->status == 'HOLD') ik-alert-triangle @elseif($a->status == 'CANCELLED') ik-bell-off @else ik-info @endif "></i> <small id="app{{$a->approver_id}}_status"><b>{{ ucwords(strtolower($a->status)) }}</b></small>
+                                        </p>
+
+                                        <div class="d-flex">
+                                            <div class="mr-2">
+                                                <img src="{{ asset('assets/img/users/user.png') }}" style="height: 35px;" alt="">
+                                            </div>
+                                            <div>
+                                                @if($a->approver_id == env('VERIFIER_ID'))
+                                                <p class="mb-0 d-inline-block">{{ $a->updated_last_by ? strtoupper($a->updated_last_by):''}}</p>
+                                                <br>
+                                                @else
+                                                @if( $a->is_alternate )
+                                                <p class="mb-0 d-inline-block">{{ strtoupper($a->updated_last_by) }} (ALT APPROVER)</p>
+                                                <br>
+                                                @endif
+                                                @endif
+                                                <p class="mb-0 d-inline-block"><b>{{ strtoupper($a->user->name) }}</b></p>
+                                                <br>
+                                                <p class="mb-5 d-inline-block" style="opacity: .8"><small>{{ ucwords(strtolower($a->user->designation)) }}</small></p>
+                                            </div>                                            
                                         </div>
 
-                                        <p class="mt-10"><small>Date Responded : {{ \App\Transaction::date_format($a->updated_at) }}</small><br>
-                                            <small>Response Aging : {{ \App\ApprovalStatus::no_of_days_of_responding($data->id,$a->approver_id) }}</small>
+                                        @if(!is_null($a->current_seq))
+                                        <p style="margin-bottom: 0px; margin-top: 6px;"><small>Date Responded : {{ \App\Transaction::date_format($a->updated_at) }}</small><br>
+                                            <small hidden>Response Aging : {{ \App\ApprovalStatus::no_of_days_of_responding($data->id,$a->approver_id) }}</small>
                                         </p>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                             @endforeach
                         </div>
 
-                        <hr>
-                        @php $nxtapprover = \App\ApprovalStatus::next_approver($data->id,$approverstatus->sequence_number); @endphp
-
-                        @if($previous)
-
-                        @if($approverstatus->status == 'PENDING' && $data->status =='CANCELLED' && $previous->status=='APPROVED')
-
-                        <div class="row" id="approverBtn">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <form class="forms-sample">
-                                            <div class="form-group">
-                                                <label for="exampleTextarea1">Old Remarks</label>
-                                                <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleTextarea1">Remarks</label>
-                                                <textarea class="form-control" id="remarks" rows="4"></textarea>
-                                                <input type="hidden" id="position" value="{{ Auth::user()->position }}">
-                                            </div>
-                                            <div class="float-md-right">
-                                                <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}' , '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-
-                                                @if ($data->details=='OSTR')
-                                                <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
-                                                @endif
-
-                                                <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @elseif($approverstatus->status == 'HOLD' && $data->status =='HOLD' && $previous->status=='APPROVED')
-                        <div class="row" id="approverBtn">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <form class="forms-sample">
-                                            <div class="form-group">
-                                                <label for="exampleTextarea1">Old Remarks</label>
-                                                <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleTextarea1">Remarks</label>
-                                                <textarea class="form-control" id="remarks" rows="4"></textarea>
-                                                <input type="hidden" id="position" value="{{ Auth::user()->position }}">
-                                            </div>
-                                            <div class="float-md-right">
-                                                <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                                 @if ($data->details=='OSTR')
-                                                <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
-                                                @endif
-                                                <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @elseif($approverstatus->status == 'HOLD' && $data->status =='HOLD' && $previous->status=='HOLD')
-                        <div class="row" id="approverBtn">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <form class="forms-sample">
-                                            <div class="form-group">
-                                                <label for="exampleTextarea1">Old Remarks</label>
-                                                <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleTextarea1">Remarks</label>
-                                                <textarea class="form-control" id="remarks" rows="4"></textarea>
-                                                <input type="hidden" id="position" value="{{ Auth::user()->position }}">
-                                            </div>
-                                            <div class="float-md-right">
-                                                <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                                 @if ($data->details=='OSTR')
-                                                <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
-                                                @endif
-                                                <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @elseif($approverstatus->status == 'PENDING' && $data->status =='IN-PROGRESS' && $previous->status=='APPROVED')
-                        <div class="row" id="approverBtn">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <form class="forms-sample">
-                                            <div class="form-group">
-                                                <div class="form-group">
-                                                    <label for="exampleTextarea1">Old Remarks</label>
-                                                    <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
-                                                </div>
-                                                <label for="exampleTextarea1">Remarks</label>
-                                                <textarea class="form-control" id="remarks" rows="4"></textarea>
-                                                <input type="hidden" id="position" value="{{ Auth::user()->position }}">
-                                            </div>
-                                            <div class="float-md-right">
-                                                <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                                 @if ($data->details=='OSTR')
-                                                <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
-                                                @endif
-                                                <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @elseif($approverstatus->status == 'HOLD' && $data->status =='HOLD' && $previous->status=='APPROVED')
-                        <div class="row" id="approverBtn">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <form class="forms-sample">
-                                            <div class="form-group">
-                                                <div class="form-group">
-                                                    <label for="exampleTextarea1">Old Remarks</label>
-                                                    <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
-                                                </div>
-                                                <label for="exampleTextarea1">Remarks</label>
-                                                <textarea class="form-control" id="remarks" rows="4"></textarea>
-                                                <input type="hidden" id="position" value="{{ Auth::user()->position }}">
-                                            </div>
-                                            <div class="float-md-right">
-                                                <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                             @if ($data->details=='OSTR')
-                                                <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
-                                            @endif
-                                                <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @elseif($approverstatus->status == 'PENDING' && $data->status =='APPROVED' && $previous->status=='APPROVED')
-                        <div class="row" id="approverBtn">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <form class="forms-sample">
-                                            <div class="form-group">
-                                                <div class="form-group">
-                                                    <label for="exampleTextarea1">Old Remarks</label>
-                                                    <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
-                                                </div>
-                                                <label for="exampleTextarea1">Remarks</label>
-                                                <textarea class="form-control" id="remarks" rows="4"></textarea>
-                                                <input type="hidden" id="position" value="{{ Auth::user()->position }}">
-                                            </div>
-                                            <div class="float-md-right">
-                                                <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                             @if ($data->details=='OSTR')
-                                                <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
-                                            @endif
-                                                <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @elseif($approverstatus->status == 'HOLD' && $data->status =='APPROVED' && $previous->status=='APPROVED')
-                        <div class="row" id="approverBtn">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <form class="forms-sample">
-                                            <div class="form-group">
-                                                <label for="exampleTextarea1">Old Remarks</label>
-                                                <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleTextarea1">Remarks</label>
-                                                <textarea class="form-control" id="remarks" rows="4"></textarea>
-                                                <input type="hidden" id="position" value="{{ Auth::user()->position }}">
-                                            </div>
-                                            <div class="float-md-right">
-                                                <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                                 @if ($data->details=='OSTR')
-                                                <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
-                                                @endif
-                                                <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @elseif($approverstatus->status == 'HOLD' && $data->status =='IN-PROGRESS' && $previous->status=='HOLD')
-                        <div class="row" id="approverBtn">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <form class="forms-sample">
-                                            <div class="form-group">
-                                                <label for="exampleTextarea1">Old Remarks</label>
-                                                <textarea class="form-control" id="oldremarks" rows="4">{{ $approverstatus->remarks }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleTextarea1">Remarks</label>
-                                                <textarea class="form-control" id="remarks" rows="4"></textarea>
-                                                <input type="hidden" id="position" value="{{ Auth::user()->position }}">
-                                            </div>
-                                            <div class="float-md-right">
-                                                <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                                 @if ($data->details=='OSTR')
-                                                <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
-                                                @endif
-                                                <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-                        @else
-
-                        @if($currentuser && ( $currentuser->status=='PENDING' || $currentuser->status=='HOLD') )
-
-                        <div class="row" id="approverBtn">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <form class="forms-sample">
-
-                                            <div class="form-group" @if($currentuser->status=='PENDING') style="display: none" @endif>
-                                                <label for="exampleTextarea1">Old Remarks</label>
-                                                <textarea class="form-control" id="oldremarks" rows="4" readonly>{{ $approverstatus->remarks }}</textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleTextarea1">Remarks</label>
-                                                <textarea class="form-control" id="remarks" rows="4"></textarea>
-                                                <input type="hidden" id="position" value="{{ Auth::user()->position }}">
-                                            </div>
-                                            <div class="float-md-right">
-                                                <button type="button" class="btn btn-primary mr-2" onclick="approve('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','APPROVED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Approve</button>
-                                                 @if ($data->details=='OSTR')
-                                                <button type="button" class="btn btn-warning mr-2" onclick="hold('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','HOLD','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Hold</button>
-                                                @endif
-                                                <button type="button" class="btn btn-danger mr-2" onclick="cancel('{{$data->ref_req_no}}','{{$data->id}}','{{auth()->user()->id}}','CANCELLED','{{$data->details}}','{{auth()->user()->username}}','{{auth()->user()->designation}}','{{$lastapprover}}','{{ $nxtapprover }}', '{{$last_app_seq->sequence_number}}', '{{$curr_seq->sequence_number}}');">Disapprove</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-                        @endif
                     </div>
-                    <div class="alert alert-danger">View full history please click this <a data-toggle="modal" href="#approvalhistory{{ $data->id }}" class="text-blue"><strong>link</strong></a>.</div>
+                    <div class="px-4" hidden>
+                        <div class="alert alert-danger">View full history please click this <a data-toggle="modal" href="#approvalhistory{{ $data->id }}" class="text-blue"><strong>link</strong></a>.</div>
+                    </div>
                     <div class="modal fade" id="approvalhistory{{ $data->id }}" tabindex="-1" role="basic" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -410,6 +504,91 @@
                 </div>
             </div>
         </div>
+        <div class="col-3 card box-shadow border-medium" style="padding: 0px; height: fit-content;">
+            <div class="card" style="margin-bottom: 0px">
+                <div class="card-header wfs-bg" style="padding: 12px 15px 2px 15px; display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                    <h6><b class="wfs-text-default" style="font-weight: 900 !important;">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" style="transform: translate(2px, -3px);">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m4 8h6m-6-4h6m4-8v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
+                        </svg>
+                        History
+                        </b>
+                    </h6>
+                    <small class="wfs-text-default px-2" style="transform: translate(0px, -4px);"><i style="padding: 2px; line-height: 2;">Transaction ID: {{$data->transid }}</i></small> 
+                </div>
+                <div class="card-body px-4" style="padding: 12px !important; min-height: 460px;">
+
+                    <div class="clearfix scroll-max scroll-style pr-1" style="max-height: 436px;">
+                        @forelse($historicalremarks as $hr)
+                            {{-- @if(!is_null($hr->current_seq)) --}}
+                                <div class="box-style-class mb-2">
+                                    <div class="w-100 d-flex align-items-center justify-content-between @if($hr->status == 'APPROVED') bg-success @elseif($hr->status == 'HOLD') bg-warning @elseif($hr->status == 'CANCELLED') bg-danger @else bg-secondary @endif box-shadow rounded-md py-1 px-2">
+                                        <span style="line-height: normal;" class="text-white">
+                                            <i class="ik @if($hr->status == 'APPROVED') ik-check-circle @elseif($hr->status == 'HOLD') ik-alert-triangle @elseif($hr->status == 'CANCELLED') ik-bell-off @else ik-info @endif "></i> <b>{{ ucwords(strtolower($hr->status)) }}</b>
+                                        </span>
+                                        <small class="text-white" style="margin-top: 3px;" @if(!$hr->approver) hidden @endif>By: {{ $hr->approver }}</small>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small>
+                                            Date and Time of Approval:
+                                        </small>
+                                        @if(!$hr->updated_at)
+                                            <p class="mb-1" style="font-size: 12px; font-weight: 800;"><i>No date and time for this history item.</i></p>
+                                        @else
+                                            <p class="mb-1" style="font-size: 12px; font-weight: 800;"><i>{{ $hr->updated_at }}</i></p>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        @if($hr->remarks)
+                                        <small>
+                                            Remarks:
+                                        </small>
+                                            <!-- <p class="mb-0" style="font-size: 12px; font-weight: 800;"><i>No remarks for this history.</i></p> -->
+                                            <p class="mb-0" style="font-size: 12px; font-weight: 800;"><i>{{ $hr->remarks }}</i></p>
+                                        @endif
+                                    </div>
+                                </div>
+                            {{-- @endif  --}}
+                        @empty
+                            <div class="box-shadow">
+                                <center> No history Found </center>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    <table hidden class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <td style="color: black; font-weight: bold; font-size: 15px; text-align: center;">Date and Time of Approval</td>
+                                <td style="color: black; font-weight: bold; font-size: 15px; text-align: center;">Update By</td>
+                                <td style="color: black; font-weight: bold; font-size: 15px; text-align: center;">Action</td>
+                                <td style="color: black; font-weight: bold; font-size: 15px; text-align: center;">Remarks</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($historicalremarks as $hr)
+                            <tr>
+                                <td style="color: black; font-size: 12px; text-align: center;">{{ $hr->updated_at }}</td>
+                                <td style="color: black; font-size: 12px; text-align: center;">{{ $hr->updated_last_by }}</td>
+                                <td style="color: black; font-size: 12px; text-align: center;">{{ $hr->status }}</td>
+                                <td style="color: black; font-size: 12px; text-align: center;">{{ $hr->remarks }}</td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="14">
+                                    <center> No Record Found </center>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+
+                </div>
+                <div hidden class="card-footer">
+                    <button type="button" class="btn dark btn-outline" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
@@ -418,6 +597,34 @@
 <script src="{{ asset('assets/plugins/sweetalert/dist/sweetalert.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/summernote/dist/summernote-bs4.min.js') }}"></script>
 <script>
+     const validTransTypes = [
+        'OREM REQUEST FOR PAYMENT',
+        'OREM CASH ADVANCE',
+        'OREM LIQUIDATION',
+        'OREM TRAVEL ORDER',
+        'DAVAO OREM REQUEST FOR PAYMENT',
+        'DAVAO OREM CASH ADVANCE',
+        'DAVAO OREM LIQUIDATION',
+        'DAVAO OREM TRAVEL ORDER',
+        'OREM',
+        'OSTR',
+        'IMP',
+        'VBS', // TESTING
+        'GATEPASS' // TESTING
+    ];
+
+    const apiEndpoints = {
+        'OREM': "{{env('APP_API_OREM')}}/receiver.php",
+        'VBS': "http://mlsvrvhcbooking/VBS/public/api/wfs/intial_approved.php", // CHANGE IN PRODUCTION
+        'GATEPASS': "{{env('APP_API_GATEPASS')}}api/wfs/update-request"
+    }
+
+    const apiKeys = {
+        'OREM': 'base64:Hxle0o3dpTUGQlpJy3dBbMhlDu9Y98uMqZEqFe/Upcs=',
+        'VBS': "{{env('APP_API_VBS_TOKEN')}}",
+        'GATEPASS': "{{env('APP_API_GATEPASS_TOKEN')}}",
+    }
+
     $(document).ready(function() {
         $.ajaxSetup({
             headers: {
@@ -425,6 +632,31 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+
+
+        // $.ajax({
+        //     url: "{{env('APP_API_GATEPASS')}}" + "api/wfs/update-request",
+        //     // url: "http://172.16.11.53/api/wfs/update-request",
+        //     // url: "http://172.16.11.53:8888/api/wfs/update-request",
+        //     type: 'POST',
+        //     data: {
+        //         foo: 'bar'
+        //     },
+        //     success: function (response) {
+        //         console.log('SUCCESSSSSSS');
+        //         console.log(response);
+        //     },
+                
+        //     error: function (xhr, status, error) {
+        //         console.log('TESTFAILED ENV');
+        //         console.log(xhr);
+        //         console.log(status);
+        //         console.log(error);
+
+        //     },
+        // });
+
+        // console.log("{{env('APP_API_GATEPASS')}}");
     });
 
 
@@ -440,7 +672,7 @@
     }
 
     // approve request
-    function approve(rqid, tid, uid, status, trans_type, approver_name, designation, last_approver, nxtapprover, last_seq, curr_seq) {
+    function approve(rqid, tid, uid, status, trans_type, approver_name, designation, last_approver, nxtapprover, last_seq, curr_seq, approver_fullname, approver_position) {
         var remarks = $('#remarks').val() + ' by: ' + $('#position').val();
         var overall_status = '';
         var wfs_trans_stat = '';
@@ -464,11 +696,16 @@
                 }
 
             } else {
+                if(validTransTypes.includes(trans_type)) {
                 overall_status = 'PARTIALLY APPROVED';
-                wfs_trans_stat = 'IN-PROGRESS';
+                wfs_trans_stat =  (trans_type === "OSTR") ? 'FULLY APPROVED' : 'IN-PROGRESS';
+                } else {
+                    overall_status = 'PARTIALLY APPROVED';
+                    wfs_trans_stat = 'FULLY APPROVED';
+                }
             }
         }
-
+ 
         swal({
                 title: "Are you sure?",
                 text: "Do you really want to approve this transaction?",
@@ -477,6 +714,7 @@
                 dangerMode: false,
             })
             .then((willApprove) => {
+
                 if (willApprove) {
 
                     swal({
@@ -488,7 +726,8 @@
                         allowOutsideClick: false,
                         allowEnterKey: false,
                     })
-                    if (trans_type == 'OREM REQUEST FOR PAYMENT') {
+
+                    if (trans_type.includes("OREM")) {
                         $.ajax({
                             url: "{{env('APP_API_OREM')}}/receiver.php",
                             // url: "http://localhost:8081/in-progress/03-30-2021/WFH-OREM/api/workflow/receiver.php",
@@ -502,7 +741,9 @@
                                 approver_remarks: remarks,
                                 status: status,
                                 overallstatus: overall_status,
-                                nextapprover: nxtapprover
+                                nextapprover: nxtapprover,
+                                approver_fullname: approver_fullname,
+                                approver_position: approver_position
                             },
 
                             success: function(response) {
@@ -540,6 +781,74 @@
                                         });
                                     },
                                 });
+                                
+                            },
+                            error: function(response) {
+                                swal("Connection from other application was interrupted!");
+                            }
+                        });
+
+                    } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
+                        console.log('HERE');
+                        console.log(trans_type);
+                        console.log(apiEndpoints[trans_type]);
+                        console.log(apiKeys[trans_type]);
+                        $.ajax({
+                            // url: "http://172.16.11.65/vbs/public/api/wfs/receiver.php", // CHANGE IN PRODUCTION
+                            url: apiEndpoints[trans_type],
+                            type: "POST",
+                            data: {
+                                trans_id: rqid,
+                                workflow_token: apiKeys[trans_type],
+                                details: trans_type,
+                                approver: approver_name,
+                                current_approver: designation,
+                                approver_remarks: $('#remarks').val(), // remarks,
+                                status: status,
+                                overallstatus: overall_status,
+                                lastapprover: last_approver,
+                                nextapprover: nxtapprover,
+                                approver_fullname: approver_fullname,
+                                approver_position: approver_position,
+                                wfs_trans_stat: wfs_trans_stat
+                            },
+
+                            success: function(response) {
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/updateStatus',
+                                    data: {
+                                        rid: tid,
+                                        uid: uid,
+                                        rstatus: status,
+                                        remarks: remarks,
+                                        ov_stat: wfs_trans_stat,
+                                        curr_seq: curr_seq
+                                    },
+
+                                    success: function(response) {
+
+                                        $('#app' + uid).removeClass('bg-secondary');
+                                        $('#app' + uid).addClass('bg-success');
+                                        $('#ticon' + uid).removeClass('ik-info');
+                                        $('#ticon' + uid).addClass('ik-check-circle');
+
+                                        $('#app' + uid + '_status').html('APPROVED');
+                                        $('#approverBtn').hide();
+                                        swal({
+                                            title: "Success",
+                                            text: "Transaction has been approved!",
+                                            icon: "success",
+                                            closeOnEsc: false,
+                                            closeOnClickOutside: false,
+                                            allowOutsideClick: false,
+                                            allowEnterKey: false,
+                                        }).then(function() {
+                                            window.location.reload();
+                                        });
+                                    },
+                                });
+                                // swal("Response: " + response);
                             },
                             error: function(response) {
                                 swal("Connection from other application was interrupted!");
@@ -547,18 +856,23 @@
                         });
                     } else {
                         $.ajax({
-                            type: 'POST',
-                            url: "{{env('APP_URL')}}/updateStatus",
+                            url: "{{ route('status.updateStatus') }}",
+                            method: 'POST',
+                            datatype: 'JSON',
                             data: {
                                 rid: tid,
                                 uid: uid,
                                 rstatus: status,
                                 remarks: remarks,
                                 ov_stat: wfs_trans_stat,
-                                curr_seq: curr_seq
+                                curr_seq: curr_seq,
+                                trans_type: trans_type
                             },
 
                             success: function(response) {
+                                if (trans_type === "OSTR") {
+                                    changeStatus("{{ $data->approval_url }}", {status: 'FULLY APPROVED', id: rqid}, 'POST');
+                                }
 
                                 $('#app' + uid).removeClass('bg-secondary');
                                 $('#app' + uid).addClass('bg-success');
@@ -580,6 +894,7 @@
                                 });
                             },
                             error: function(response) {
+                                console.log(response)
                                 swal("Failed to update status!");
                             }
                         });
@@ -590,7 +905,7 @@
     //
 
     // hold request
-    function hold(rqid, tid, uid, status, trans_type, approver_name, designation, last_approver, nxtapprover, last_seq, curr_seq) {
+    function hold(rqid, tid, uid, status, trans_type, approver_name, designation, last_approver, nxtapprover, last_seq, curr_seq, approver_fullname, approver_position) {
         var remarks = $('#remarks').val() + ' by: ' + $('#position').val();
         var overall_status = '';
         var wfs_trans_stat = '';
@@ -614,8 +929,13 @@
                 }
 
             } else {
+                if(validTransTypes.includes(trans_type)) {
                 overall_status = 'PARTIALLY APPROVED';
-                wfs_trans_stat = 'IN-PROGRESS';
+                wfs_trans_stat =  (trans_type === "OSTR") ? 'HOLD' : 'IN-PROGRESS';
+                } else {
+                    overall_status = 'PARTIALLY APPROVED';
+                    wfs_trans_stat = 'HOLD';
+                }
             }
         }
 
@@ -638,8 +958,8 @@
                         allowOutsideClick: false,
                         allowEnterKey: false,
                     })
-                    if (trans_type == 'OREM REQUEST FOR PAYMENT') {
 
+                    if (trans_type.includes("OREM")) {
                         $.ajax({
                             url: "{{env('APP_API_OREM')}}/receiver.php",
                             // url: "http://localhost:8081/in-progress/03-30-2021/WFH-OREM/api/workflow/receiver.php",
@@ -653,10 +973,11 @@
                                 approver_remarks: remarks,
                                 status: status,
                                 overallstatus: overall_status,
-                                nextapprover: nxtapprover
+                                nextapprover: nxtapprover,
+                                approver_fullname: approver_fullname,
+                                approver_position: approver_position
                             },
                             success: function(response) {
-
                                 $.ajax({
                                     type: 'POST',
                                     url: '/updateStatus',
@@ -694,10 +1015,73 @@
                                 swal("Connection from other application was interrupted!");
                             }
                         });
+
+                    } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
+                        $.ajax({
+                            url: apiEndpoints[trans_type],
+                            type: "POST",
+                            data: {
+                                trans_id: rqid,
+                                workflow_token: apiKeys[trans_type],
+                                details: trans_type,
+                                approver: approver_name,
+                                current_approver: designation,
+                                approver_remarks:  $('#remarks').val(), // remarks,
+                                status: status,
+                                overallstatus: overall_status,
+                                lastapprover: last_approver,
+                                nextapprover: nxtapprover,
+                                approver_fullname: approver_fullname,
+                                approver_position: approver_position
+                            },
+                            success: function(response) {
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/updateStatus',
+                                    data: {
+                                    rid: tid,
+                                    uid: uid,
+                                    rstatus: status,
+                                    remarks: remarks,
+                                    ov_stat: wfs_trans_stat,
+                                    curr_seq: curr_seq
+                                },
+                                success: function(response) {
+                                    $('#app' + uid).removeClass('bg-secondary');
+                                    $('#app' + uid).addClass('bg-warning');
+                                    $('#ticon' + uid).removeClass('ik-info');
+                                    $('#ticon' + uid).addClass('ik-alert-triangle');
+
+                                    $('#app' + uid + '_status').html('Hold');
+                                        $('#approverBtn').hide();
+                                        swal({
+                                            title: "Success",
+                                            text: "Transaction has been hold!",
+                                            icon: "success",
+                                            closeOnEsc: false,
+                                            closeOnClickOutside: false,
+                                            allowOutsideClick: false,
+                                            allowEnterKey: false,
+                                        }).then(function() {
+                                            window.location.reload();
+                                        });
+                                    },
+                                });
+                                // swal(response);
+                            },
+                            error: function(response) {
+                                swal("Connection from other application was interrupted!");
+                            }
+                        });
+
                     } else {
                         $.ajax({
-                            type: 'POST',
-                            url: "{{env('APP_URL')}}/updateStatus",
+                            // type: 'POST',
+                            // url: "{{env('APP_URL')}}/updateStatus",
+                            // url: "/updateStatus",
+                            url: "{{ route('status.updateStatus') }}",
+                            method: 'POST',
+                            datatype: 'JSON',
                             data: {
                                 rid: tid,
                                 uid: uid,
@@ -708,6 +1092,10 @@
                             },
 
                             success: function(response) {
+                                if (trans_type === "OSTR") {
+                                    changeStatus("{{ $data->approval_url }}", {status: 'HOLD', id: rqid}, 'POST');
+                                }
+
                                 $('#app' + uid).removeClass('bg-secondary');
                                 $('#app' + uid).addClass('bg-warning');
                                 $('#ticon' + uid).removeClass('ik-info');
@@ -736,10 +1124,9 @@
 
             });
     }
-    //
 
     // cancel request
-    function cancel(rqid, tid, uid, status, trans_type, approver_name, designation, last_approver, nxtapprover, last_seq, curr_seq) {
+    function cancel(rqid, tid, uid, status, trans_type, approver_name, designation, last_approver, nxtapprover, last_seq, curr_seq, approver_fullname, approver_position) {
         var remarks = $('#remarks').val() + ' by: ' + $('#position').val();
         var overall_status = '';
         var wfs_trans_stat = '';
@@ -763,11 +1150,16 @@
                 }
 
             } else {
+                if(validTransTypes.includes(trans_type)) {
                 overall_status = 'PARTIALLY APPROVED';
-                wfs_trans_stat = 'IN-PROGRESS';
+                wfs_trans_stat =  (trans_type === "OSTR") ? 'CANCELLED' : 'IN-PROGRESS';
+                } else {
+                    overall_status = 'PARTIALLY APPROVED';
+                    wfs_trans_stat = 'CANCELLED';
+                }
             }
         }
-
+        // alert(status);
         swal({
                 // title: "Are you sure?",
                 title: "Disapprove transaction?",
@@ -790,8 +1182,7 @@
                         allowOutsideClick: false,
                         allowEnterKey: false,
                     })
-                    if (trans_type == 'OREM REQUEST FOR PAYMENT') {
-
+                    if (trans_type.includes("OREM")) {
                         $.ajax({
                             url: "{{env('APP_API_OREM')}}/receiver.php",
                             // url: "http://localhost:8081/in-progress/03-30-2021/WFH-OREM/api/workflow/receiver.php",
@@ -805,7 +1196,9 @@
                                 approver_remarks: remarks,
                                 status: status,
                                 overallstatus: overall_status,
-                                nextapprover: nxtapprover
+                                nextapprover: nxtapprover,
+                                approver_fullname: approver_fullname,
+                                approver_position: approver_position
                             },
 
                             success: function(response) {
@@ -849,10 +1242,80 @@
                                 swal("Connection from other application was interrupted!");
                             }
                         });
+
+                    } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
+                        $.ajax({
+                            url: apiEndpoints[trans_type],
+                            type: "POST",
+                            data: {
+                                trans_id: rqid,
+                                workflow_token: apiKeys[trans_type],
+                                details: trans_type,
+                                approver: approver_name,
+                                current_approver: designation,
+                                approver_remarks: $('#remarks').val(), // remarks,
+                                status: status,
+                                overallstatus: overall_status,
+                                lastapprover: last_approver,
+                                nextapprover: nxtapprover,
+                                approver_fullname: approver_fullname,
+                                approver_position: approver_position
+                            },
+
+                            success: function(response) {
+
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/updateStatus',
+                                    data: {
+                                        rid: tid,
+                                        uid: uid,
+                                        rstatus: status,
+                                        remarks: remarks,
+                                        ov_stat: wfs_trans_stat,
+                                        curr_seq: curr_seq
+                                    },
+
+                                    success: function(response) {
+
+                                        $('#app' + uid).removeClass('bg-secondary');
+                                        $('#app' + uid).addClass('bg-danger');
+                                        $('#ticon' + uid).removeClass('ik-info');
+                                        $('#ticon' + uid).addClass('ik-bell-off');
+
+                                        $('#app' + uid + '_status').html('Cancelled');
+                                        $('#approverBtn').hide();
+                                        swal({
+                                            title: "Success",
+                                            text: "Transaction has been cancelled!",
+                                            icon: "success",
+                                            closeOnEsc: false,
+                                            closeOnClickOutside: false,
+                                            allowOutsideClick: false,
+                                            allowEnterKey: false,
+                                        }).then(function() {
+                                            window.location.reload();
+                                        });
+
+                                        // swal("REQUEST COMPLETED: " + response);
+                                    },
+                                });
+
+                                // swal("REQUEST COMPLETED: " + response);
+                            },
+                            error: function(response) {
+                                swal("Connection from other application was interrupted!");
+                            }
+                        });
+
                     } else {
                         $.ajax({
-                            type: 'POST',
-                            url: "{{env('APP_URL')}}/updateStatus",
+                            // type: 'POST',
+                            // url: "{{env('APP_URL')}}/updateStatus",
+                            // url: "/updateStatus",
+                            url: "{{ route('status.updateStatus') }}",
+                            method: 'POST',
+                            datatype: 'JSON',
                             data: {
                                 rid: tid,
                                 uid: uid,
@@ -863,6 +1326,9 @@
                             },
 
                             success: function(response) {
+                                if (trans_type === "OSTR") {
+                                    changeStatus("{{ $data->approval_url }}", {status: 'CANCELLED', id: rqid}, 'POST');
+                                }
 
                                 $('#app' + uid).removeClass('bg-secondary');
                                 $('#app' + uid).addClass('bg-danger');
@@ -887,11 +1353,38 @@
                                 swal("Failed to update status!");
                             }
                         });
+                        swal("Connection from other application was interrupted!");
                     }
-                }
-
+                } 
             });
     }
+
+    function changeStatus(url, data, method){
+        $.ajax({
+            type: method,
+            url: url,
+            data: data,
+            success: function(response) {
+                console.log('Status updated successfully:', response.message);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error updating status:', xhr.responseJSON ? xhr.responseJSON.message : 'Unknown error');
+            }
+        });
+    }
     //
+    //  function changeStatus(url, data, method){
+    //     $.ajax({
+    //         type: method,
+    //         url: url,
+    //         data: data,
+    //         success: function(response) {
+    //             alert('Status updated successfully:', response.message);
+    //         },
+    //         error: function(xhr, status, error) {
+    //             alert('Error updating status:', xhr.responseJSON ? xhr.responseJSON.message : 'Unknown error');
+    //         }
+    //     });
+    // }
 </script>
 @endsection

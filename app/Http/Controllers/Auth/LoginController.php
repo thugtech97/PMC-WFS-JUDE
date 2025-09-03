@@ -59,7 +59,7 @@ class LoginController extends Controller
 
             } else {
 
-                return redirect(route('transactions.index'));
+                return redirect()->route('transactions.index_new', ['details' => 'OREM']);
 
             }  
         }

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app-new')
 
 @section('pagecss')
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}">
@@ -6,107 +6,125 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('/assets/plugins/select2/dist/css/select2.min.css') }}"/>
     <style type="text/css">
         #data_table_wrapper { width: 100%; }
+        .dept-selection .select2.select2-container { min-width: 100%; max-width: 100%; }
+        .dataTables_length label { text-transform: capitalize; font-weight: bolder !important; }
+        .table-container-class .dataTables_length { position: absolute; }
+        .table-container-class #data-table_wrapper .dt-buttons a.dt-button.buttons-collection.buttons-page-length { display: none; }
+        .table-container-class #data-table_wrapper .dt-buttons { position: absolute; left: 15%; top: 28px; }
+        .table-container-class #data-table_wrapper .dt-buttons a.dt-button.buttons-excel { border-radius: 6px; padding: 8px 12px 8px 5px; color: white; font-weight: 600; }
+        body[data-theme="sky-theme"] .table-container-class #data-table_wrapper .dt-buttons a.dt-button.buttons-excel { background-color: #0862f6 !important; }
+        body[data-theme="earth-theme"] .table-container-class #data-table_wrapper .dt-buttons a.dt-button.buttons-excel { background-color: #f38500 !important; }
     </style>
 @endsection
 
 @section('content')
-    
     <div class="container-fluid">
     <form action="{{ route('transactions.history') }}" method="GET">
         @csrf
         <div class="page-header">
             
-            <div class="row align-items-end">
-                
+            <div class="row align-items-center">
+                <!-- Header Card -->
                 <div class="col-lg-8">
-                    <div class="page-header-title">
-                        <i class="ik ik-file-text bg-blue"></i>
-                        <div class="d-inline">
-                            <h5>Historical Transactions</h5>
-                            <span>below are the list of previous transactions.</span>
+                    <div class="card shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <span class="me-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="#5E17EB" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M10 3v4a1 1 0 0 1-1 1H5m4 10v-2m3 2v-6m3 6v-3m4-11v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z" />
+                                </svg>
+                            </span>
+                            <div>
+                                <h5 class="card-title mb-1"><b>Historical Transactions</b></h5>
+                                <p class="card-text text-muted mb-0" style="font-size:14px;">
+                                    Below are the list of previous transactions and filter to generate a history of
+                                    transactions.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-4">
+                <!-- Breadcrumbs -->
+                <div class="col-lg-4 d-flex align-items-center justify-content-lg-end mt-3 mt-lg-0">
                     <nav class="breadcrumb-container" aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <a href="{{ route('transactions.index') }}">Transactions</a>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                    viewBox="0 0 24 24" class="me-1" style="transform: translateY(-2px);">
+                                    <path stroke="#5E17EB" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M10 3v4a1 1 0 0 1-1 1H5m4 10v-2m3 2v-6m3 6v-3m4-11v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z" />
+                                </svg>
+                                <a href="{{ route('transactions.index_new', ['details' => 'OREM']) }}">Transactions</a>
                             </li>
-                            <li class="breadcrumb-item active" aria-current="page">Lists</li>
+                            <li class="breadcrumb-item active" aria-current="page">History</li>
                         </ol>
                     </nav>
                 </div>
-            </div>                 
-             <div class="row align-items-end">
-                
-                <div class="col-lg-2">
-                    <div class="page-header-title">
-                        <i class="ik ik-file-text bg-blue"></i>
-                        <div class="d-inline">
-                            <h5>Filter</h5>
-                            <span>Department</span>
-                        </div>
-                    </div>
-                </div>              
-                 <div class="col-lg-9">
-                    &nbsp;<br>
-                  <strong>Name:</strong> <select class="js-example-basic-single js-states form-control" data-live-search="true" id="id_label_single" name="rdepartment" style="height: 30px;"> 
-                    @if($seldepartment)
-                    <option value="{{ $seldepartment }}">{{ $seldepartment }}</option>
-                    @endif
-                    <option value="">SELECT</option>
-                    @foreach ($departments as $department)
-                        <option value="{{ $department->department}}">{{ $department->department}}</option>
-                    @endforeach
-                  </select>
-                </div> 
-            </div> 
+            </div>    
 
-             <div class="row align-items-end">
-                
-                <div class="col-lg-2">
-                    <div class="page-header-title">
-                        <i class="ik ik-calendar bg-blue"></i>
-                        <div class="d-inline">
-                            <h5>Filter</h5>
-                            <span>Status</span>
+            <br />
+
+            <div class="card border-fade box-shadow p-3">
+                <div class="d-flex align-items-center justify-content-start">
+                    <span  class="svg-class">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6m-6 4h6m-6 4h6M6 3v18l2-2 2 2 2-2 2 2 2-2 2 2V3l-2 2-2-2-2 2-2-2-2 2-2-2Z"/>
+                        </svg>
+                    </span>
+                    <h5 style="margin: 0; margin-left: -2px;"><b>Generate History</b></h5>
+                </div>
+                <div class="w-full d-flex mt-3 gap-8">
+                    <div class="col-6 d-flex flex-column">
+                        <div class="mb-4 d-flex flex-column dept-selection">
+                            <strong>Department</strong>
+                            <select class="js-example-basic-single js-states form-control" data-live-search="true" id="id_label_single" name="rdepartment" style="height: 30px; min-width: 100%;"> 
+                              @if($seldepartment)
+                              <option value="{{ $seldepartment }}">{{ $seldepartment }}</option>
+                              @endif
+                              <option value="">SELECT</option>
+                              @foreach ($departments as $department)
+                                  <option value="{{ $department->department}}">{{ $department->department}}</option>
+                              @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <strong>Status</strong>
+                            <select class="bs-select form-control" data-live-search="true" id="transstatus" name="transstatus" style="height: 30px;"> 
+                              @if($transstatus)
+                              <option value="{{ $transstatus }}">{{ $transstatus }}</option>
+                              @endif
+                              <option value="">SELECT</option>
+                              <option value="FULLY APPROVED">FULLY APPROVED</option>
+                              <option value="CANCELLED">CANCELLED</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6 d-flex flex-column">
+                        <div class="mb-4">
+                            <strong>Date Range</strong>
+                            <input type="text" class="form-control" text-align="center" name="date_filter" id="date_filter"style="height: 30px;" />
+                        </div>
+                        <div class="mb-4 d-flex flex-column">
+                            <strong>&nbsp;</strong>
+                            <button type="submit" style="min-height: 34px !important; line-height: 2;" name="filter_submit" class="btn btn-sm btn-success d-flex align-items-center justify-content-center">
+                                <svg class="mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M5 3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5Zm0 12a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H5Zm12 0a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-2Zm0-12a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2Z"/>
+                                  <path fill-rule="evenodd" d="M10 6.5a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1ZM10 18a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1Zm-4-4a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1Zm12 0a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1Z" clip-rule="evenodd"/>
+                                </svg>
+                                Generate
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3">
-                    &nbsp;<br>
-                  <strong>Status:</strong> <select class="bs-select form-control" data-live-search="true" id="transstatus" name="transstatus" style="height: 30px;"> 
-                    @if($transstatus)
-                    <option value="{{ $transstatus }}">{{ $transstatus }}</option>
-                    @endif
-                    <option value="">SELECT</option>
-                    <option value="FULLY APPROVED">FULLY APPROVED</option>
-                    <option value="CANCELLED">CANCELLED</option>
-                  </select>
-                </div> 
-                <div class="col-lg-2">
-                    <div class="page-header-title">
-                        <i class="ik ik-calendar bg-blue"></i>
-                        <div class="d-inline">
-                            <h5>Search</h5>
-                            <span>Date Range</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    &nbsp;<br>
-                  <strong>Date:</strong> <input type="text" class="form-control" text-align="center" name="date_filter" id="date_filter"style="height: 30px;" />
-                </div>       
-                 <div class="col-lg-2">
-                    &nbsp;<br>
-                  <input type="submit" name="filter_submit" class="btn btn-sm btn-success" value="Filter"/>
-                </div>           
-            </div>        
+            </div>
         </div>
     </form>
-        <div class="col-md-12">
+        
+        <div class="col-md-12 table-container-class">
 
     <!--         <div class="card-header row">
                 <div class="col col-sm-9">
@@ -126,20 +144,46 @@
                     </div>
                 </div>
             </div> -->
-            <div class="row">
+            <br />
 
+            <div class="status-filter d-flex align-items-center justify-content-start">
+                <span for="statusFilter">Status filter:</span>
+                <select id="statusFilter" class="form-control">
+                    <option value="">All</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="IN-PROGRESS">In-Progress</option>
+                    <option value="FULLY APPROVED">Fully Approved</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div class="type-filter d-flex align-items-center justify-content-start">
+                <span for="typeFilter">Transaction Type:</span>
+                <select id="typeFilter" class="form-control">
+                    <option value="">All</option>
+                    <option value="CA">Cash Advance</option>
+                    <option value="LIQ">Liquidation</option>
+                    <option value="RFP">Request for Payment</option>
+                    <option value="TO">Travel Order</option>
+                    <option value="IMP-MRS">IMP-MRS</option>
+                    <option value="IMP-IMF">IMP-IMF</option>
+                </select>
+            </div>
+
+            <div class="row">
                 <table class="table table-stripped" id="data-table" style="width:100%">
                     
                     <thead>
                         <th>Transaction ID</th>
                         <th>Requestor</th>
                         <th>Date Requested</th>
+                        <th>Payee</th>
                         <th>Source</th>
                          <th>Amount</th>
                         <th>Approval Summary</th>
                         <th>Overall Status</th>
                         <th>Purpose</th>
-                        <th>Action</th>
+                        <th hidden>Action</th>
                     </thead>
 
                     <tbody>
@@ -156,10 +200,17 @@
                                         TO-{{ sprintf('%06d',$t->ref_req_no) }}
                                     @endif 
                                 </td> --}}
-                                <td>{{ $t->transid }} <br> <span style="font-weight: bold; font-size: 11px"> @if(empty($t->locsite)) (Agusan) @elseif(!empty($t->locsite)) (Davao) @endif </span> </td>
+                                <td>
+                                    <a href="{{ route('transaction.details',$t->id) }}" class="scale-1" title="View Details">
+                                        {{ $t->transid }}
+                                      <br>
+                                      <span style="font-weight: bold; font-size: 11px"> {{ $t->details }} @if(empty($t->locsite)) (Agusan) @elseif(!empty($t->locsite)) (Davao) @endif </span>
+                                    </a>
+                                </td>
                                 <td>{{ $t->requestor }}<br><small>{{ $t->department }}</small></td>
                                 <td>{{ $t->created_at }}</td> 
                                 
+                                <td>{{ $t->name }}</td>
                                 <td>{{ $t->details }}</td>
                                 <td>{{ $t->currency }} {{ number_format($t->totalamount,2) }} <br> <small>@if($t->totalamount < $t->converted_amount) (PHP {{ number_format($t->converted_amount,2) }}) @endif</small> </td>
                                 <td>
@@ -170,9 +221,9 @@
                                     {{-- {{ \Carbon\Carbon::now()->diffInDays( \Carbon\Carbon::parse($t->created_at),false) }} --}}
                                     @if (\Carbon\Carbon::now()->diffInDays( \Carbon\Carbon::parse($t->created_at),false) <= 2 && $t->status=='PENDING')<i class="fa fa-exclamation text-red"></i> @endif 
                                 </td>
-                                <td><label class="badge badge-secondary">{{ $t->status }}</label></td>
+                                <td><label class="badge @if($t->status == 'FULLY APPROVED') badge-success @elseif($t->status == 'CANCELLED') badge-danger @else badge-secondary @endif" >{{ $t->status }}</label></td>
                                 <td>{{ $t->purpose }}</td>
-                                <td>
+                                <td hidden>
                                     <div class="list-actions">
                                         <a href="{{ route('transaction.details',$t->id) }}"><i class="ik ik-eye"></i></a>
                                     </div>
@@ -196,6 +247,11 @@
 <script src="{{ asset('assets/plugins/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/assets/plugins/select2/dist/js/select2.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/assets/plugins/daterange/daterangepicker.js') }}"></script>
+
+<script type="text/javascript" src="{{ asset('assets/plugins/datatables.net/js/dataTables.buttons.min.js') }}"></script> 
+<script type="text/javascript" src="{{ asset('assets/plugins/datatables.net/js/jszip.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('assets/plugins/datatables.net/js/buttons.html5.min.js') }}"></script>
+
 <script type="text/javascript">
     $(function () {
         let dateInterval = getQueryParameter('date_filter');
@@ -244,14 +300,92 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#data-table').dataTable( {
-             "order": [[ 2, 'desc' ]]
+             "order": [[ 2, 'desc' ]],
+             "searching": true,
+             "lengthMenu": [
+                 [5, 10, 15, 25, -1],
+                 [5, 10, 15, 25, "All"] // change per page values here
+             ],
+             // jeff said: Let's add a export to excel unto the data table.
+             dom: 'lBfrtip',
+             buttons: [{
+                    extend: 'excel',
+                    className: 'btn btn-primary text-white', // Bootstrap style, or use your own class
+                    text: `
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" 
+                            width="20" height="20" fill="white" viewBox="0 0 24 24" 
+                            style="margin-right:6px;vertical-align:middle;">
+                        <path fill-rule="evenodd" d="M9 7V2.221a2 2 0 0 0-.5.365L4.586 6.5a2 2 0 0 0-.365.5H9Zm2 0V2h7a2 2 0 0 1 2 2v9.293l-2-2a1 1 0 0 0-1.414 1.414l.293.293h-6.586a1 1 0 1 0 0 2h6.586l-.293.293A1 1 0 0 0 18 16.707l2-2V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9h5a2 2 0 0 0 2-2Z" clip-rule="evenodd"/>
+                        </svg>
+                        <span style="vertical-align:middle;">Export to Excel</span>
+                    `
+                }, 'pageLength'],
+             // set the initial value
+             "pageLength": 25
              });
-
     } );
 </script>
 <script>
     $(document).ready(function() {
-    $('.js-example-basic-single').select2();
-});
+        $('.js-example-basic-single').select2();
+
+        // jeff said: Let's add a status filter to the data table.
+        let data_table = $('#data-table').DataTable();
+
+        $("#filterTable_filter.dataTables_filter").append($("#statusFilter"));
+        $("#filterTable_filter.dataTables_filter").append($("#typeFilter"));
+
+        var statusIndex = 0;
+        var typeIndex = 0;
+
+        $("#data-table th").each(function (i) {
+        if ($($(this)).html() == "Overall Status") {
+          statusIndex = i;
+          return false;
+        }
+        });
+
+        $("#data-table th").each(function (i) {
+          if ($($(this)).html() == "Transaction ID") {
+            typeIndex = i;
+            return false;
+          }
+        });
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+
+                var selectedItem = $('#statusFilter').val()
+                var status = data[statusIndex];
+
+                if (selectedItem === "" || status.includes(selectedItem)) {
+                    return true;
+                }
+                return false;
+            }
+        );
+
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+
+                var selectedType = $('#typeFilter').val()
+                var type = data[typeIndex];
+                // console.log(type.includes(selectedType))
+
+                if (selectedType === "" || type.includes(selectedType)) {
+                    return true;
+                }
+                return false;
+            }
+        );
+
+        $("#statusFilter").change(function (e) {
+            data_table.draw();
+        });
+
+        $("#typeFilter").change(function (e) {
+            data_table.draw();
+        });
+    });
 </script>
 @endsection

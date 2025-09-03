@@ -1,4 +1,4 @@
-<div class="app-sidebar colored">
+<div class="app-sidebar colored" hidden>
     <div class="sidebar-header">
         <a class="header-brand" href="index.html">
             <div class="logo-img">

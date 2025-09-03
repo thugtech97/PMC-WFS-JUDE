@@ -17,7 +17,7 @@
 		// orem submitted token request == orem token saved on workflow
 		if($_POST['token'] == $data['token']){
 
-			$insert = "insert into transactions (ref_req_no,source_app,source_url,details,requestor,totalamount,converted_amount,department,transid,email,status,created_at,currency,purpose,name,locsite) values ('".$_POST['refno']."','".$_POST['sourceapp']."','".$_POST['sourceurl']."','".$transaction_type."','".$_POST['requestor']."', '".$_POST['totalamount']."','".$_POST['converted_amount']."','".$_POST['department']."','".$_POST['transid']."','".$_POST['email']."','PENDING', GETDATE(),'".$_POST['currency']."','".$_POST['purpose']."','".$_POST['name']."','".$_POST['locsite']."'); SELECT SCOPE_IDENTITY()"; 
+			$insert = "insert into transactions (ref_req_no,source_app,source_url,details,requestor,totalamount,converted_amount,department,transid,email,status,created_at,currency,purpose,name,locsite) values ('".$_POST['refno']."','".$_POST['sourceapp']."','".$_POST['sourceurl']."','".$transaction_type."','".$_POST['requestor']."', '".$_POST['totalamount']."','".$_POST['converted_amount']."','".$_POST['department']."','".$_POST['transid']."','".$_POST['email']."','PENDING', GETDATE(),'".$_POST['currency']."','".str_replace("'","''",$_POST['purpose'])."','".str_replace("'","''",$_POST['name'])."','".$_POST['locsite']."'); SELECT SCOPE_IDENTITY()"; 
 
 			$result = sqlsrv_query($conn, $insert); 
 			sqlsrv_next_result($result);

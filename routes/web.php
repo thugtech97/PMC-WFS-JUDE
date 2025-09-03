@@ -138,11 +138,12 @@ Route::view('/login','auth.login')->name('login');
 Route::post('/checklogin', 'Auth\LoginController@checklogin')->name('login-attempt');
 Route::get('/logout','Auth\LoginController@logout')->name('logout');
 
-
 Route::get('/approval-overview/{id}/{type}','TransactionsController@overview')->name('approval-overview');
 
 Route::group(['middleware' => ['auth']], function () {
-	   Route::post('/search-hris-employee', 'SearchController@search_hris_employee')->name('search.hris.employee');
+    
+   Route::post('/search-hris-employee', 'SearchController@search_hris_employee')->name('search.hris.employee');
+
 // User/Approver Maintenance
 	Route::resource('/approvers','UserController');
 	Route::get('/delete-approver','UserController@destroy')->name('approver.delete');
@@ -171,7 +172,10 @@ Route::group(['middleware' => ['auth']], function () {
 
 // Transactions
 	Route::get('/transactions','TransactionsController@index')->name('transactions.index');
-	Route::get('/history','TransactionsController@history')->name('transactions.history');
+	
+    Route::get('/transactions_new','TransactionsController@index_new')->name('transactions.index_new');
+
+    Route::get('/history','TransactionsController@history')->name('transactions.history');
 	//Route::get('/requests/pending','TransactionsController@pendings')->name('pending.requests');
 	//Route::get('/get-request-details/{id}','TransactionsController@get_request_details');
 
@@ -181,7 +185,7 @@ Route::group(['middleware' => ['auth']], function () {
 //
 
 // Approval Status
-	Route::post('updateStatus', 'ApprovalStatusController@update_request_status');
+	Route::post('/updateStatus', 'ApprovalStatusController@update_request_status')->name('status.updateStatus');
 //
 
 // Email Routes

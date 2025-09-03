@@ -2,21 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\ApprovalStatus;
+use DB;
+use App\User;
+use Exception;
+use App\HistoryLog;
 use App\Transaction;
-use App\Mail\NextApproverNotification;
-use App\Mail\ApprovedNotification;
-use App\Mail\CancelledNotification;
-use App\Mail\OnholdNotification;
-
 use GuzzleHttp\Client;
+use App\ApprovalStatus;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use GuzzleHttp\Promise\Create;
 
-use App\User;
-use DB;
+use App\Mail\OnholdNotification;
+use App\Mail\ApprovedNotification;
+use App\Mail\CancelledNotification;
+
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NextApproverNotification;
 
 class ApprovalStatusController extends Controller
 {
@@ -97,8 +102,20 @@ class ApprovalStatusController extends Controller
     }
 
     public function update_request_status(Request $request) {
-
+        // dd($request->trans_type);
         $transaction = Transaction::find($request->rid);
+
+        if ($transaction && $transaction->details === "HK" && $transaction->approval_url) {
+            $response = $this->submit_status_to_app($transaction->approval_url, $transaction->id, $request->ov_stat);
+
+            if (!$response) {
+                return response()->json([
+                    'status' => "success",
+                    'message' => 'Failed to submit status to source application.',
+                ], 500);
+            }
+        }
+
         $curr_seq    = ApprovalStatus::where('transaction_id', $transaction->id)
                                 ->where('sequence_number', $request->curr_seq)                                
                                 ->where('current_seq', null)->first();
@@ -171,7 +188,7 @@ class ApprovalStatusController extends Controller
                 }
             }
 
-        } else {            
+        } else {
            
             $remaining_approval = ApprovalStatus::where('transaction_id', $transaction->id)
                                     ->where('sequence_number', '>=', $request->curr_seq)
@@ -194,7 +211,7 @@ class ApprovalStatusController extends Controller
                     $next_seq->update(['is_current' => 1]);
 
                 foreach($verifiers as $verifier) {
-                    if(!in_array($verifier->username, ['vjarizala','kcfelisilda','cnwasawas','jccadiao','admin'])) {
+                    if(!in_array($verifier->username, ['vjarizala','kcfelisilda','cnwasawas','jccadiao','admin','dslapasanda'])) {
                         //Mail::to($verifier->email)->send(new NextApproverNotification($verifier, $transaction)); 
                     }
                 }
@@ -203,23 +220,102 @@ class ApprovalStatusController extends Controller
 
                 $next_approver = User::find($next_seq->approver_id);                
 
-                if(!in_array($next_approver->username, ['vjarizala','kcfelisilda','cnwasawas','admin'])) {
+                if(!in_array($next_approver->username, ['vjarizala','kcfelisilda','cnwasawas','admin','dslapasanda'])) {
                     $next_seq->update(['is_current' => 1]);
                     // Mail::to(auth()->user()->email)
                     //     ->send(new NextApproverNotification($next_approver, $transaction)); 
-                    //Mail::to($next_approver->email)->send(new NextApproverNotification($next_approver, $transaction));
+                    // Mail::to($next_approver->email)->send(new NextApproverNotification($next_approver, $transaction));
                 }               
             }
-
-
         }
 
         $transaction->update(['status'  => $request->ov_stat]);
 
-        return response()->json(); 
+        // run OSTR Api..
+        $response = true;
+        if ($request->trans_type == 'OSTR') {
+            try {
 
+                $stock = array(
+                    "stock_id" => $transaction->ref_req_no,
+                    "stock_status" => $transaction->status
+                );
+
+                // IMPORTANT NOTE: Change this in production use.
+                // $response = Http::get('http://172.16.20.28/PMC-OSTR/public/api/transactions'); // handshake
+                // $response = Http::post('http://172.16.20.28/PMC-OSTR/public/api/ostr-sync', [ // 20.28 url
+                $response = Http::post('http://mlsvrostdr/PMC-OSTR/public/api/ostr-sync', [ // LIVE url
+                                'stock' => $stock
+                            ]);
+
+            } catch(\GuzzleHttp\Exception\RequestException $e) {
+                \Log::info($e->getMessage());
+                \Log::info($e->getCode());
+                \Log::info($e->getResponse()->getBody()->getContents());
+            }
+
+        }
+
+        // run IMP-MRS Api..
+        // if ($request->trans_type == 'IMP') {
+        //     try {
+
+        //         $items = array(
+        //             "id" => $transaction->transid,
+        //             "status" => $transaction->status
+        //         );
+
+        //         dd($items);
+
+        //         $response = Http::post('http://172.16.20.28/pmc-imp_jeff2/public/api/items/updateItemDetails', [
+        //                         'items' => $items
+        //                     ]);
+
+        //     } catch(\GuzzleHttp\Exception\RequestException $e) {
+        //         \Log::info($e->getMessage());
+        //         \Log::info($e->getCode());
+        //         \Log::info($e->getResponse()->getBody()->getContents());
+        //     }
+
+        // }
+
+        // Save a history log of every action made..
+        $this->createHistory($transaction->id,auth()->user()->name,$transaction->status,$request->remarks);
+
+        return response()->json([
+                'status' => "success",
+                'message' => "Data transfer is completed!",
+                'reply' => $response
+            ], 200);
+        
     }
 
+    public function createHistory($tid,$username,$status,$remarks)
+    {
+        $history = new HistoryLog;
+        $history->transaction_id = $tid;
+        $history->approver = $username;
+        $history->status = $status;
+        $history->remarks = $remarks;
+        $history->created_at = date('Y-m-d h:m:s');
+        $history->save();
+    }
 
+    public function submit_status_to_app($approval_url, $id, $status): bool
+    {
+        try {
+            $payload = [
+                'transaction_id' => $id,
+                'status' => $status,
+                'acted_by' => Auth::user()->name
+            ];
+
+            $response = Http::post($approval_url, $payload);
+
+            return $response->successful(); // returns true or false
+        } catch (Exception $e) {
+            return false;
+        }
+    }
 
 }

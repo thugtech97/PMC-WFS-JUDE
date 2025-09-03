@@ -131,7 +131,7 @@
                         success: function( response ) {
 
                             $.ajax({
-                                url: "http://172.16.20.28/WFH-OREM/api/workflow/receiver.php",
+                                url: "http://mlsvrapps/PMC-OREM/api/workflow/receiver.php",
                                 type: "POST",
                                 data: { 
                                         trans_id : tid,
@@ -209,7 +209,7 @@
                         success: function( response ) {
 
                             $.ajax({
-                                url: "http://172.16.20.28/WFH-OREM/api/workflow/receiver.php",
+                                url: "http://mlsvrapps/PMC-OREM/api/workflow/receiver.php",
                                 type: "POST",
                                 data: { 
                                         trans_id : tid,
@@ -287,7 +287,7 @@
                         success: function( response ) {
 
                             $.ajax({
-                                url: "http://172.16.20.28/WFH-OREM/api/workflow/receiver.php",
+                                url: "http://mlsvrapps/PMC-OREM/api/workflow/receiver.php",
                                 type: "POST",
                                 data: { 
                                         trans_id : tid,

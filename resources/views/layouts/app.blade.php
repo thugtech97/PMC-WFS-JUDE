@@ -12,6 +12,7 @@
         <!-- <link rel="icon" href="favicon.ico" type="image/x-icon" /> -->
 
         <link href="{{ asset('assets/dist/css/font-face.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet">
         
         <link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap/dist/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/plugins/fontawesome-free/css/all.min.css') }}">
@@ -30,32 +31,21 @@
         @yield('pagecss')
     </head>
 
-    <body>
+    <style type="text/css">
+        body .wrapper .header-top,
+        body .wrapper .page-wrap .main-content {
+            padding-left: 0px;
+        }    
+    </style>
+
+    <body id="wfs-wrapper" data-theme="sky-theme">
 
         <div class="wrapper">
-            <header class="header-top" header-theme="light">
-                <div class="container-fluid">
-                    <div class="d-flex justify-content-between">
-                        <div class="top-menu d-flex align-items-center">
-                            <button type="button" id="navbar-fullscreen" class="nav-link"><i class="ik ik-maximize"></i></button>
-                        </div>
-                        <div class="top-menu d-flex align-items-center">
-                            {{-- <button type="button" class="nav-link ml-10 right-sidebar-toggle"><i class="ik ik-message-square"></i><span class="badge bg-success">3</span></button> --}}
-
-                            <div class="dropdown">
-                                <a class="dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="avatar" src="{{ asset('assets/img/user.jpg') }}" alt=""></a>                                
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                                    <a class="dropdown-item" href="{{ route('change.password') }}"><i class="ik ik-lock dropdown-icon"></i> Change Password</a>
-                                    <a class="dropdown-item" href="{{ route('logout') }}"><i class="ik ik-power dropdown-icon"></i> Logout</a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </header>
+            
+            @include('layouts.header')
 
             <div class="page-wrap">
+
                 @include('layouts.sidebar')
 
                 <div class="main-content">
@@ -66,10 +56,10 @@
 
                 @include('layouts.chat-panel')
 
-                <footer class="footer">
+                <footer class="footer wfs-bg" style="padding-left: 32px">
                     <div class="w-100 clearfix">
-                        <span class="text-center text-sm-left d-md-inline-block">Copyright © {{ date('Y') }} Philsaga Mining Corporation. All Rights Reserved.</span>
-                        <span class="float-none float-sm-right mt-1 mt-sm-0 text-center">Crafted with <i class="fa fa-heart text-danger"></i> by <a href="javascript:;" class="text-dark">ICT</a></span>
+                        <span class="text-center text-sm-left d-md-inline-block wfs-text-default">Copyright © {{ date('Y') }} Philsaga Mining Corporation. All Rights Reserved.</span>
+                        <span class="float-none float-sm-right mt-1 mt-sm-0 text-center wfs-text-default">Crafted with <i class="fa fa-heart text-danger"></i> by <a href="javascript:;" class="wfs-text-default">ICT</a></span>
                     </div>
                 </footer>
                 

@@ -17,6 +17,7 @@ use App\Rfpheader;
 use App\Liqheader;
 use App\Toheader;
 
+use App\HistoryLog;
 use App\User;
 use Auth;
 use DB;
@@ -25,9 +26,8 @@ class TransactionsController extends Controller
 {
     // all requests
 
-
     public function index()
-    {        
+    {
         // $transactions = Transaction::whereIn('id',
         //     function($query){
         //         $query->select('transaction_id')->from('approval_status')
@@ -35,8 +35,8 @@ class TransactionsController extends Controller
         //         ->orWhere('alternate_approver_id',auth()->user()->id);
         //     })
         // ->get();  
-
-        $transactions = Transaction::whereIn('id' ,
+        
+        $transactions = Transaction::whereIn('id' , // $transactions = Transaction::whereIn('id' ,
             function($query){
                 $query->select('transaction_id')->from('approval_status')
                 // ->where('current_seq',null)
@@ -52,10 +52,15 @@ class TransactionsController extends Controller
                         $verifiers_array[] = $verifier_main->id;
                         
                         $query->whereIn('approver_id', $verifiers_array)
-                            ->where('current_seq', null)->where('is_current',1);                            
+                            ->where('current_seq', null)
+                            ->where('is_current',1);
+                            
                     } else {                        
                         $query->where('approver_id', auth()->user()->id)
-                            ->where('current_seq', null)->where('is_current',1);
+                            ->where('current_seq', null)
+                            ->where('is_current',1);
+
+                        // dd($query->orderBy('transaction_id', 'DESC')->get());
                     }
 
                 })->orWhere(function($query) {
@@ -68,34 +73,189 @@ class TransactionsController extends Controller
                         $verifiers_array[] = $verifier_main->id;
                         
                         $query->whereIn('alternate_approver_id', $verifiers_array)
-                            ->where('current_seq', null)->where('is_current',1);                            
+                            ->where('current_seq', null)
+                            ->where('is_current',1);                            
                     } else {
                         $query->where('alternate_approver_id', auth()->user()->id)
-                            ->where('current_seq', null)->where('is_current',1);
+                            ->where('current_seq', null)
+                            ->where('is_current',1);
                     }
                 });
                 // ->where('approver_id',auth()->user()->id)                
                 // ->orWhere('alternate_approver_id',auth()->user()->id);
             });
-        // dd(auth()->user()->id);
+
+        $pending = DB::table('approval_status')
+                    ->join('users', 'users.id', '=', 'approval_status.approver_id')
+                    ->join('transactions', 'approval_status.transaction_id', '=', 'transactions.id')
+                    ->where('users.id',auth()->user()->id)
+                    ->where('transactions.status', '=', 'PENDING')
+                    ->get()->count();
+
+        $upcoming = DB::table('approval_status')
+                    ->join('users', 'users.id', '=', 'approval_status.approver_id')
+                    ->join('transactions', 'approval_status.transaction_id', '=', 'transactions.id')
+                    ->where('users.id',auth()->user()->id)
+                    ->whereIn('transactions.status', ['PENDING','IN-PROGRESS','RESUBMITTED'])
+                    ->get()->count();
+
+        $inprogress = DB::table('approval_status')
+                    ->join('users', 'users.id', '=', 'approval_status.approver_id')
+                    ->join('transactions', 'approval_status.transaction_id', '=', 'transactions.id')
+                    ->where('users.id',auth()->user()->id)
+                    ->where('transactions.status', '=', 'IN-PROGRESS')
+                    ->get()->count();
+
+        // if(auth::user()->designation == 'MANAGER') {
+        //     if( auth()->user()->username == 'jccadiao' ) {
+        //         $transactions = $transactions->where(function($query){
+        //             // dria n2 tirahon ang connection sa transaction og sa template
+        //             // kung accounting + is_not_dynamic meaning si maam J
+        //         })->whereIn('status', ['PENDING','IN-PROGRESS','HOLD','RESUBMITTED'])->get();
+        //     } else {
+        //         // dd($transactions->whereIn('status', ['PENDING', 'HOLD','RESUBMITTED'])->take(44)->get());
+        //         $transactions = $transactions->whereIn('status', ['PENDING', 'HOLD','RESUBMITTED'])->get();
+                
+        //         // $test_qry = $transactions->whereIn('status', ['PENDING', 'HOLD','RESUBMITTED'])->count();
+        //         // $rows_to_get = max(0,$test_qry - 5);
+        //         // $transactions = $transactions_query->whereIn('status', ['PENDING', 'HOLD','RESUBMITTED'])->take($rows_to_get)->get();
+
+        //         // $transactions = $transactions->where('transid', 'RFP-00000s4556')->get();
+        //         // dd($rows_to_get, $transactions);
+        //     }
+        // } else {
+        //     $transactions = $transactions->whereIn('status', ['IN-PROGRESS', 'HOLD','RESUBMITTED'])->get();
+        // }
+        
+        // $transactions = $transactions->whereIn('status', ['IN-PROGRESS', 'HOLD','RESUBMITTED'])->get();
+
         if(auth::user()->designation == 'MANAGER') {
+            
             if( auth()->user()->username == 'jccadiao' ) {
                 $transactions = $transactions->where(function($query){
                     // dria n2 tirahon ang connection sa transaction og sa template
                     // kung accounting + is_not_dynamic meaning si maam J
                 })->whereIn('status', ['PENDING','IN-PROGRESS','HOLD','RESUBMITTED'])->get();
             } else {
-                $transactions = $transactions->whereIn('status', ['PENDING', 'HOLD','RESUBMITTED'])->get();
+                $transactions = $transactions->whereIn('status', ['PENDING','IN-PROGRESS', 'HOLD','RESUBMITTED'])->get();
             }
+
+            // if( auth()->user()->username == 'jccadiao' ) {
+            //     $transactions = $transactions->where(function($query){
+            //         // dria n2 tirahon ang connection sa transaction og sa template
+            //         // kung accounting + is_not_dynamic meaning si maam J
+            //     })->whereIn('status', ['PENDING','IN-PROGRESS','HOLD','RESUBMITTED'])->get();
+            // } else {
+                // $transactions = $transactions->whereIn('status', ['PENDING', 'HOLD','RESUBMITTED'])->get();
+                // $transactions = $transactions->whereIn('status', ['IN-PROGRESS', 'HOLD','RESUBMITTED'])->get();
+            // }
+
         } else {
             $transactions = $transactions->whereIn('status', ['IN-PROGRESS', 'HOLD','RESUBMITTED'])->get();
-        }
-        return view('transaction.index',compact('transactions'));
+        } 
+
+        return view('transaction.index',compact('transactions','upcoming','inprogress','pending'));
     }
 
-     public function history(Request $request)
-    {                
+    public function index_new(Request $request)
+    {
+        $type = $request->get('details');
+        $transactions = Transaction::where('details', 'like', '%' . $type . '%')
+            ->whereIn('id' ,
+            function($query){
+                $query->select('transaction_id')->from('approval_status')
+                ->where(function ($query) { 
 
+                    if(Auth::user()->designation == 'VERIFIER'){
+                        $verifiers = User::where('designation', 'VERIFIER')->get();
+                        $verifier_main = User::where('designation', 'VERIFIED')->first();
+
+                        $verifiers_array =  $verifiers->pluck('id')->toArray();
+
+                        $verifiers_array[] = $verifier_main->id;
+                        
+                        $query->whereIn('approver_id', $verifiers_array)
+                            ->where('current_seq', null)
+                            ->where('is_current',1);
+                            
+                    } else {                        
+                        $query->where('approver_id', auth()->user()->id)
+                            ->where('current_seq', null)
+                            ->where('is_current',1);
+                    }
+
+                })->orWhere(function($query) {
+                    if(Auth::user()->designation == 'VERIFIER'){
+                        $verifiers = User::where('designation', 'VERIFIER')->get();
+                        $verifier_main = User::where('designation', 'VERIFIED')->first();
+
+                        $verifiers_array =  $verifiers->pluck('id')->toArray();
+
+                        $verifiers_array[] = $verifier_main->id;
+                        
+                        $query->whereIn('alternate_approver_id', $verifiers_array)
+                            ->where('current_seq', null)
+                            ->where('is_current',1);                            
+                    } else {
+                        $query->where('alternate_approver_id', auth()->user()->id)
+                            ->where('current_seq', null)
+                            ->where('is_current',1);
+                    }
+                });
+            });
+        
+        $transTypes = ['OREM', 'IMP', 'OSTR', 'GATEPASS', 'HK'];
+        $pendingAll = [];
+
+        foreach ($transTypes as $ttype) {
+            $pendingAll[$ttype] = DB::table('approval_status')
+                ->join('users', 'users.id', '=', 'approval_status.approver_id')
+                ->join('transactions', 'transactions.id', '=', 'approval_status.transaction_id')
+                ->where('users.id', auth()->id())
+                ->where('transactions.status', 'PENDING')
+                ->where('transactions.details', 'like', "%{$ttype}%")
+                ->count();
+        }
+
+        $pending = DB::table('approval_status')
+                    ->join('users', 'users.id', '=', 'approval_status.approver_id')
+                    ->join('transactions', 'approval_status.transaction_id', '=', 'transactions.id')
+                    ->where('users.id',auth()->user()->id)
+                    ->where('transactions.status', '=', 'PENDING')
+                    ->get()->count();
+
+        $upcoming = DB::table('approval_status')
+                    ->join('users', 'users.id', '=', 'approval_status.approver_id')
+                    ->join('transactions', 'approval_status.transaction_id', '=', 'transactions.id')
+                    ->where('users.id',auth()->user()->id)
+                    ->whereIn('transactions.status', ['PENDING','IN-PROGRESS','RESUBMITTED'])
+                    ->get()->count();
+
+        $inprogress = DB::table('approval_status')
+                    ->join('users', 'users.id', '=', 'approval_status.approver_id')
+                    ->join('transactions', 'approval_status.transaction_id', '=', 'transactions.id')
+                    ->where('users.id',auth()->user()->id)
+                    ->where('transactions.status', '=', 'IN-PROGRESS')
+                    ->get()->count();
+
+        if(auth::user()->designation == 'MANAGER') {
+            
+            if( auth()->user()->username == 'jccadiao' ) {
+                $transactions = $transactions->where(function($query){
+                })->whereIn('status', ['PENDING','IN-PROGRESS','HOLD','RESUBMITTED'])->get();
+            } else {
+                $transactions = $transactions->whereIn('status', ['PENDING','IN-PROGRESS', 'HOLD','RESUBMITTED'])->get();
+            }
+
+        } else {
+            $transactions = $transactions->whereIn('status', ['IN-PROGRESS', 'HOLD','RESUBMITTED'])->get();
+        } 
+
+        return view('transaction.index_new',compact('transactions','upcoming','inprogress','pending','pendingAll'));
+    }
+
+    public function history(Request $request)
+    {                
         $departments = Transaction::select('department')->distinct()->orderBy('department','ASC')->get();
 
          if (isset($request->date_filter)) {
@@ -104,8 +264,7 @@ class TransactionsController extends Controller
           $date_from = $parts[0];
           $date_to = $parts[1];
 
-          if(!isset($request->transstatus) && !isset($request->rdepartment)) {                   
-
+          if(!isset($request->transstatus) && !isset($request->rdepartment)) {      
             $histories = Transaction::whereIn('id',
             function($query){
                 $query = $query->select('transaction_id')->from('approval_status');
@@ -199,7 +358,7 @@ class TransactionsController extends Controller
           $seldepartment = $request->rdepartment;   
 
       } else {
-
+        
         $carbon_date_from = new Carbon('first day of this month');
         $date_from = $carbon_date_from->toDateString();
         $carbon_date_to = new Carbon('today');
@@ -251,9 +410,10 @@ class TransactionsController extends Controller
         
         $data  = Transaction::find($id);
         
-        $query = ApprovalStatus::where('transaction_id',$id);  
+        $query = ApprovalStatus::where('transaction_id',$id);
+        // $historicalremarks =  $query->get();
 
-        $historicalremarks =  $query->get();  
+        $historicalremarks = HistoryLog::where('transaction_id',$id)->get();
 
         // $rs   = $query->latest('id')->first();
         $rs   = $query->latest('sequence_number')->first();   
@@ -453,7 +613,6 @@ class TransactionsController extends Controller
 
     public function batchsubmit(Request $request)
     {
-        
         // status = FULLY || PARTIAL
         // overallstats = APPROVED
 
@@ -467,7 +626,11 @@ class TransactionsController extends Controller
         $verifier_acc = User::where('designation', 'VERIFIED')->first();
 
         $verifiers_id = $verifiers->pluck('id')->toArray();
-        array_push($verifiers_id, $verifier_acc->id);        
+        array_push($verifiers_id, $verifier_acc->id);
+
+        if($request->cancel_reason !== "" || $request->cancel_reason!=null) {
+            $request->cancel_reason = $request->selected_action;
+        } 
 
         foreach ($cbid as $key => $i) {
 
@@ -508,7 +671,6 @@ class TransactionsController extends Controller
                 // \Log::info(json_encode($last_sequence));
                 // \Log::info('--------------');
 
-
                 if( !$next_sequence || $next_sequence->sequence_number != $approver_sequence->sequence_number ) continue;
                           
                 if( $last_sequence->sequence_number > $approver_sequence->sequence_number ) {
@@ -539,6 +701,24 @@ class TransactionsController extends Controller
                 } elseif(strpos($transaction->transid,'TO-') !== false) {
                     $requested_trans = Toheader::where('transid',$transaction->transid);
                 }
+
+                // run IMP-MRS Api..
+                // try {
+
+                //     $items = array(
+                //         "item_id" => $transaction->transid,
+                //         "item_status" => $transaction->status
+                //     );
+
+                //     $response = Http::post('http://172.16.20.28/pmc-imp_jeff2/public/api/items/details', [
+                //                     'items' => $items
+                //                 ]);
+
+                // }catch(\GuzzleHttp\Exception\RequestException $e) {
+                //     \Log::info($e->getMessage());
+                //     \Log::info($e->getCode());
+                //     \Log::info($e->getResponse()->getBody()->getContents());
+                // }
 
                 // \Log::info("action taken {$request->selected_action}");
                 // \Log::info('--------------');
@@ -574,13 +754,16 @@ class TransactionsController extends Controller
                     }
 
                     $requested_trans = $requested_trans->update([
-                        'current_approver'  =>  Auth::user()->username , 
-                        'approver_remarks'  =>  'by: ' . Auth::user()->position , 
+                        'current_approver'  =>  Auth::user()->username ,
+                        'approver_remarks'  =>  $request->cancel_reason . ' by: ' . Auth::user()->position ,
                         'next_approver'     =>  Auth::user()->username ,
                         'overallstatus'     =>  $request->selected_action ,
-                        'status'            =>  $request->selected_action , 
+                        'status'            =>  $request->selected_action ,
                         'overallstatus'     =>  $request->selected_action 
                     ]);
+
+                    // Save a history log of every action made..
+                    $this->createHistory($i,auth()->user()->name,$request->selected_action,$request->selected_action != 'CANCELLED' ? 'HOLD by' . auth()->user()->name : $request->cancel_reason);
 
                 } else {
 
@@ -592,8 +775,8 @@ class TransactionsController extends Controller
                                                         'by: ' . auth()->user()->position : 
                                                         $approver_sequence->history . ' > ' . 'by: ' . auth()->user()->position;
                     $approver_sequence->updated_last_by = auth()->user()->name;
-                    $approver_sequence->is_alternate = auth()->user()->is_alternate ? 1:0;                    
-                    $approver_sequence->is_current = 0;                     
+                    $approver_sequence->is_alternate = auth()->user()->is_alternate ? 1:0;
+                    $approver_sequence->is_current = 0;
                     $approver_sequence->save(); 
 
                     // \Log::info(json_encode($approver_sequence));
@@ -637,6 +820,8 @@ class TransactionsController extends Controller
                             ]);
                     }
 
+                    // Save a history log of every action made..
+                    $this->createHistory($i,auth()->user()->name,$request->selected_action,'Approved by ' .$request->cancel_reason);
                 }
 
 
@@ -652,6 +837,17 @@ class TransactionsController extends Controller
 
         return back()->with('notification', $notification);
 
+    }
+
+    public function createHistory($tid,$username,$status,$remarks)
+    {
+        $history = new HistoryLog;
+        $history->transaction_id = $tid;
+        $history->approver = $username;
+        $history->status = $status;
+        $history->remarks = $remarks;
+        $history->created_at = date('Y-m-d h:m:s');
+        $history->save();
     }
 
     

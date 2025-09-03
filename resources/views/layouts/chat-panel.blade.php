@@ -1,4 +1,4 @@
-<div class="chat-panel" hidden>
+<div class="chat-panel" hidden style="display: none !important;">
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <a href="javascript:void(0);"><i class="ik ik-message-square text-success"></i></a>  

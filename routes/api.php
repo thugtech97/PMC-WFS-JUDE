@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Hk\TransactionController;
+use App\Http\Controllers\Api\V1\TransactionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +19,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Rest Api's
+Route::get('transactions',[TransactionsController::class, 'handshake']);
+Route::post('history/{val}',[TransactionsController::class, 'history']);
+Route::post('wfs-sync',[TransactionsController::class, 'transmit']);
+
+Route::post('store_transaction', [TransactionController::class, 'store']);
+Route::post('get_history', [TransactionController::class, 'history']);
