@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
-
-use App\Transaction;
-use App\ApprovalStatus;
-use App\Mail\NextApproverNotification;
-
+use DB;
+use Auth;
+use App\User;
 use App\Caheader;
-use App\Rfpheader;
-use App\Liqheader;
 use App\Toheader;
 
+use App\Liqheader;
+use App\Rfpheader;
+use Carbon\Carbon;
+
 use App\HistoryLog;
-use App\User;
-use Auth;
-use DB;
+use App\Transaction;
+use App\ApprovalStatus;
+use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NextApproverNotification;
 
 class TransactionsController extends Controller
 {
@@ -478,8 +479,19 @@ class TransactionsController extends Controller
                 ->where('sequence_number', $curr_seq->sequence_number)
                 ->where('approver_id',Auth::user()->id)->first(); 
         }
-       
-        return view('transaction.details',compact('data','lastapprover','approverstatus','currentuser','previous','next','curr_seq','last_app_seq','historicalremarks'));
+
+        $url = env('HK_API_URL').'transaction-details/'.$data->ref_req_no;
+        $response = Http::get($url, [
+            'whic_token' => 'epwKerea6oFJKEAy7zyOkifnv1Re9r'
+        ]);
+
+        if ($response->successful()) {
+            $transactionDetails = $response->json();
+        } else {
+            $transactionDetails = null;
+        }
+
+        return view('transaction.details',compact('transactionDetails', 'data','lastapprover','approverstatus','currentuser','previous','next','curr_seq','last_app_seq','historicalremarks'));
     }
 
     // approve request

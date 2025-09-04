@@ -81,36 +81,112 @@
             <div class="card box-shadow border-medium" style="height: fit-content; margin-bottom: 15px;">
                 <div class="card-body" style="padding: 5px 20px;">
                     <h4 class="mt-10"><b style="font-size: 20px; font-weight: 900 !important;">Transaction Type : {{ $data->details}}</b></h4>
-                    <div class="form-group">
-                        <div class="row mt-20">
-                            <div class="col-4"> <span class="text-muted">Requestor</span>
-                                <br>
-                                <p><b>{{$data->requestor}}</b></p>
+                    
+                    @if ($transactionDetails)
+                        <div class="form-group">
+                            <div class="row mt-20">
+                                <div class="col-4">
+                                    <span class="text-muted">Week #</span>
+                                    <br>
+                                    <p><b>{{ data_get($transactionDetails, 'header.week_no') }}</b></p>
+                                </div>
+                                <div class="col-4">
+                                    <span class="text-muted">Location</span>
+                                    <br>
+                                    <p><b>{{ data_get($transactionDetails, 'header.location_area.name') }}</b></p>
+                                </div>
+                                <div class="col-4">
+                                    <span class="text-muted">Date and Time of Inspection</span>
+                                    <br>
+                                    <p>
+                                        <b>
+                                            {{ \Carbon\Carbon::parse(
+                                                data_get($transactionDetails, 'header.date_of_inspection').' '.data_get($transactionDetails, 'header.time_of_inspection')
+                                            )->format('M d, Y g:i A') }}
+                                        </b>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="col-4"> <span class="text-muted">Email</span>
-                                <br>
-                                <p><b>{{ $data->email }}</b></p>
-                            </div>
-                            <div class="col-4"> <span class="text-muted">Date Submitted</span>
-                                <br>
-                                <p><b>{{ $data->created_at }}</b></p>
+
+                            <div class="row mt-20">
+                                <div class="col-4">
+                                    <span class="text-muted">Inspected By</span>
+                                    <br>
+                                    <p><b>{{ data_get($transactionDetails, 'header.inspected_by') }}</b></p>
+                                </div>
+                                <div class="col-4">
+                                    <span class="text-muted">Remarks</span>
+                                    <br>
+                                    <p><b>{{ data_get($transactionDetails, 'header.remarks') }}</b></p>
+                                </div>
                             </div>
                         </div>
-                        <div class="row mt-20">
-                            <div class="col-4"> <span class="text-muted">Transaction #</span>
-                                <br>
-                                <p><b>{{$data->transid}}</b></p>
+
+                        <div class="form-group">
+                            {{-- 
+                            <h6 class="mb-3 text-uppercase text-secondary" style="font-size: 0.85rem; letter-spacing: 0.5px;">
+                            </h6>
+                             --}}
+                            <table class="table table-sm table-hover align-middle" style="font-size: 0.75rem;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 20%;">Category</th>
+                                        <th>Description</th>
+                                        <th style="width: 25%;">Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse (data_get($transactionDetails, 'header.checklists', []) as $i => $check)
+                                        @if (strtolower(data_get($check, 'checks')) === 'no')
+                                            <tr class="table-danger">
+                                                <td>{{ data_get($check, 'checklist.category.description') }}</td>
+                                                <td>{{ data_get($check, 'checklist.description') }}</td>
+                                                <td>{{ data_get($check, 'remarks') }}</td>
+                                            </tr>
+                                        @endif
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted fst-italic">
+                                                No failed checklist items
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="form-group">
+                            <div class="row mt-20">
+                                <div class="col-4"> <span class="text-muted">Requestor</span>
+                                    <br>
+                                    <p><b>{{$data->requestor}}</b></p>
+                                </div>
+                                <div class="col-4"> <span class="text-muted">Email</span>
+                                    <br>
+                                    <p><b>{{ $data->email }}</b></p>
+                                </div>
+                                <div class="col-4"> <span class="text-muted">Date Submitted</span>
+                                    <br>
+                                    <p><b>{{ $data->created_at }}</b></p>
+                                </div>
                             </div>
-                            <div class="col-4"> <span class="text-muted">Amount</span>
-                                <br>
-                                <p><b>{{ number_format($data->totalamount,2) }}</b></p>
-                            </div>
-                            <div class="col-4"> <span class="text-muted">Status</span>
-                                <br>
-                                <p><b style="font-weight: 900">{{$data->status}}</b></p>
+                            <div class="row mt-20">
+                                <div class="col-4"> <span class="text-muted">Transaction #</span>
+                                    <br>
+                                    <p><b>{{$data->transid}}</b></p>
+                                </div>
+                                <div class="col-4"> <span class="text-muted">Amount</span>
+                                    <br>
+                                    <p><b>{{ number_format($data->totalamount,2) }}</b></p>
+                                </div>
+                                <div class="col-4"> <span class="text-muted">Status</span>
+                                    <br>
+                                    <p><b style="font-weight: 900">{{$data->status}}</b></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
+                    
                     <div class="alert alert-info">To view the whole transaction details. Please click this <a href="{{$data->source_url}}" target="_blank" class="text-blue"><strong>link</strong></a>.</div>
                 </div>
 
