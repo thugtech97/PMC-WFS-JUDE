@@ -171,7 +171,6 @@
                                 </div>
                             </div>
                             <div class="row mt-20">
-                                <input type ="hidden" name="referenceid" id="referenceid" value="{{$data->transid}}"/>
                                 <div class="col-4"> <span class="text-muted">Transaction #</span>
                                     <br>
                                     <p><b>{{$data->transid}}</b></p>
@@ -694,7 +693,7 @@
 
     const apiEndpoints = {
         'OREM': "{{env('APP_API_OREM')}}/receiver.php",
-        'VBS': "http://127.0.0.1:8000/api/wfs/vbs_approvals.php", // CHANGE IN PRODUCTION
+        'VBS': "http://mlsvrvhcbooking/VBS/public/api/wfs/intial_approved.php", // CHANGE IN PRODUCTION
         'GATEPASS': "{{env('APP_API_GATEPASS')}}api/wfs/update-request"
     }
 
@@ -877,7 +876,6 @@
                             url: apiEndpoints[trans_type],
                             type: "POST",
                             data: {
-                            reference_id: $('#referenceid').val(),
                                 trans_id: rqid,
                                 workflow_token: apiKeys[trans_type],
                                 details: trans_type,
