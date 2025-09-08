@@ -312,7 +312,7 @@ class ApprovalStatusController extends Controller
 
             $response = Http::post($approval_url, $payload);
 
-            return $response->successful(); // returns true or false
+            return $response->successful();
         } catch (Exception $e) {
             return false;
         }

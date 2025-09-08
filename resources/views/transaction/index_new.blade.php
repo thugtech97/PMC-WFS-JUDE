@@ -79,7 +79,7 @@
                 </a>
             </div>
 
-            <div class="nav-card position-relative d-none {{ request('details') === 'GATEPASS' ? 'active' : '' }}">
+            <div class="nav-card position-relative {{ request('details') === 'GATEPASS' ? 'active' : '' }}">
                 <span class="nav-card-icon rounded text-light">
                     {{ $pendingAll["GATEPASS"] }}
                 </span>

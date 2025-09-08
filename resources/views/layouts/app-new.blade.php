@@ -192,6 +192,7 @@
                                             <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'OREM']) }}">OREM</a></li>
                                             <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'IMP']) }}">IMP</a></li>
                                             <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'OSTR']) }}">OSTR</a></li>
+                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'GATEPASS']) }}">Gatepass</a></li>
                                             <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'HK']) }}">Housekeeping</a></li>
                                         </ul>
                                     </li>

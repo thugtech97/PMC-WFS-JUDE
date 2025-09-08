@@ -480,14 +480,28 @@ class TransactionsController extends Controller
                 ->where('approver_id',Auth::user()->id)->first(); 
         }
 
-        $url = env('HK_API_URL').'transaction-details/'.$data->ref_req_no;
-        $response = Http::get($url, [
-            'whic_token' => 'epwKerea6oFJKEAy7zyOkifnv1Re9r'
-        ]);
+        try {
+            $url = env('HK_API_URL') . 'transaction-details/' . $data->ref_req_no;
 
-        if ($response->successful()) {
-            $transactionDetails = $response->json();
-        } else {
+            $response = Http::get($url, [
+                'whic_token' => 'epwKerea6oFJKEAy7zyOkifnv1Re9r'
+            ]);
+
+            if ($response->successful()) {
+                $transactionDetails = $response->json();
+            } else {
+                Log::warning('HK API request failed', [
+                    'url' => $url,
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+                $transactionDetails = null;
+            }
+        } catch (\Throwable $e) {
+            Log::error('HK API request error: ' . $e->getMessage(), [
+                'url' => $url,
+                'trace' => $e->getTraceAsString(),
+            ]);
             $transactionDetails = null;
         }
 

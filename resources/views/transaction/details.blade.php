@@ -175,10 +175,12 @@
                                     <br>
                                     <p><b>{{$data->transid}}</b></p>
                                 </div>
-                                <div class="col-4"> <span class="text-muted">Amount</span>
-                                    <br>
-                                    <p><b>{{ number_format($data->totalamount,2) }}</b></p>
-                                </div>
+                                @if(strpos($data->details, 'OREM') !== false)
+                                    <div class="col-4"> <span class="text-muted">Amount</span>
+                                        <br>
+                                        <p><b>{{ number_format($data->totalamount,2) }}</b></p>
+                                    </div>
+                                @endif
                                 <div class="col-4"> <span class="text-muted">Status</span>
                                     <br>
                                     <p><b style="font-weight: 900">{{$data->status}}</b></p>
