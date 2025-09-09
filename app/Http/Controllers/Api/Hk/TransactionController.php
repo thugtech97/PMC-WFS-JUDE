@@ -50,6 +50,8 @@ class TransactionController extends Controller {
             DB::table($db.'.dbo.transactions')->where('transid', $transid)->update(['status' => 'PENDING']);
             DB::table($db.'.dbo.approval_status')->where('transaction_id', $existData->id)->update(['status' => 'PENDING']);
 
+            $this->createHistory($existData->id, $data['requestor'] ?? '', "SUBMITTED", $data['sourceapp'] ?? "");
+
             return response()->json([
                 'success' => true,
                 'message' => 'Existing transaction updated to PENDING.',

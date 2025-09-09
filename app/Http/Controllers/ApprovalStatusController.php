@@ -105,8 +105,8 @@ class ApprovalStatusController extends Controller
         // dd($request->trans_type);
         $transaction = Transaction::find($request->rid);
 
-        if ($transaction && $transaction->details === "HK" && $transaction->approval_url) {
-            $response = $this->submit_status_to_app($transaction->approval_url, $transaction->id, $request->ov_stat);
+        if ($transaction /*&& $transaction->details === "HK"*/ && $transaction->approval_url) {
+            $response = $this->submit_status_to_app($transaction->approval_url, $transaction->id, $request->ov_stat, $request->remarks);
 
             if (!$response) {
                 return response()->json([
@@ -301,13 +301,14 @@ class ApprovalStatusController extends Controller
         $history->save();
     }
 
-    public function submit_status_to_app($approval_url, $id, $status): bool
+    public function submit_status_to_app($approval_url, $id, $status, $remarks): bool
     {
         try {
             $payload = [
                 'transaction_id' => $id,
                 'status' => $status,
-                'acted_by' => Auth::user()->name
+                'acted_by' => Auth::user()->name,
+                'remarks' => $remarks
             ];
 
             $response = Http::post($approval_url, $payload);
