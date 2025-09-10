@@ -78,6 +78,8 @@ class TransactionController extends Controller {
             'approval_url'     => $data['approval_url'],
         ]);
 
+        /*
+
         $approvers = DB::table($db.'.dbo.template_approvers')->where('template_id', $data_result->template_id)->get();
 
         foreach ($approvers as $approver) {
@@ -103,6 +105,17 @@ class TransactionController extends Controller {
                 ]);
             }
         }
+        */
+
+        DB::table($db.'.dbo.approval_status')->insert([
+            'transaction_id'        => $insertedID,
+            'approver_id'           => $data['approver_id'] ?? 0,
+            'alternate_approver_id' => 0,
+            'sequence_number'       => 0,
+            'status'                => 'PENDING',
+            'created_at'            => now(),
+            'is_current'            => 1,
+        ]);
         
         $this->createHistory($insertedID, $data['requestor'] ?? '', "SUBMITTED", $data['sourceapp'] ?? "");
 
