@@ -98,6 +98,16 @@
                     &nbsp;&nbsp; <b style="color: #434343;">HOUSEKEEPING</b>
                 </a>
             </div>
+
+            <div class="nav-card position-relative {{ request('details') === 'VBS' ? 'active' : '' }}">
+                <span class="nav-card-icon rounded text-light">
+                    {{ $pendingAll["VBS"] }}
+                </span>
+                <a href="{{ route('transactions.index_new', ['details' => 'VBS']) }}"
+                    class="nav-link px-3 py-2 shadow bg-white rounded main-nav-btn">
+                    &nbsp;&nbsp; <b style="color: #434343;">VBS</b>
+                </a>
+            </div>
         </div>
     </div>
     <div class="container-fluid wfs-transactions">

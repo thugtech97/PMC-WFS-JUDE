@@ -205,7 +205,7 @@ class TransactionsController extends Controller
                 });
             });
         
-        $transTypes = ['OREM', 'IMP', 'OSTR', 'GATEPASS', 'HK'];
+        $transTypes = ['OREM', 'IMP', 'OSTR', 'GATEPASS', 'HK', 'VBS'];
         $pendingAll = [];
 
         foreach ($transTypes as $ttype) {
