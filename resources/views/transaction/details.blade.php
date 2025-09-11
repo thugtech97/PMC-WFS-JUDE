@@ -1155,7 +1155,7 @@
                                 swal("Connection from other application was interrupted!");
                             }
                         });
-*/
+
                     } else {
                         $.ajax({
                             // type: 'POST',
