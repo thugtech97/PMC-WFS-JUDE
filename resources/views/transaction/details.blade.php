@@ -867,7 +867,7 @@
                             }
                         });
 
-                    /*
+                    
                     } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
                         console.log('HERE');
                         console.log(trans_type);
@@ -935,7 +935,7 @@
                                 swal("Connection from other application was interrupted!");
                             }
                         }); 
-                        */
+                        
                     } else {
                         $.ajax({
                             url: "{{ route('status.updateStatus') }}",
@@ -1098,7 +1098,7 @@
                             }
                         });
 
-                    /*} else if (['VBS', 'GATEPASS'].includes(trans_type)) {
+                    } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
                         $.ajax({
                             url: apiEndpoints[trans_type],
                             type: "POST",
@@ -1324,7 +1324,7 @@
                                 swal("Connection from other application was interrupted!");
                             }
                         });
-/*
+
                     } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
                         $.ajax({
                             url: apiEndpoints[trans_type],
@@ -1389,7 +1389,7 @@
                                 swal("Connection from other application was interrupted!");
                             }
                         });
-*/
+
                     } else {
                         $.ajax({
                             // type: 'POST',
