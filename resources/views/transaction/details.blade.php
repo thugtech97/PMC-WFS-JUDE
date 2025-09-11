@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app-new')
 
 @section('pagecss')
 <link rel="stylesheet" href="{{ asset('assets/css/dialog/sweetalert2.min.css') }}">
@@ -31,38 +31,47 @@
 </style>
 @section('content')
 <div class="page-header" style="margin-bottom: 15px;">
-    <div class="row align-items-end px-3">
-
+    <div class="row align-items-center px-3">
+        <!-- Header Card -->
         <div class="col-lg-8">
-            <div class="page-header-title">
-                <div class="title-card-class wfs-bg">
-                    <span class="svg-class">
-                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
-                          <path fill-rule="evenodd" d="M9 2.221V7H4.221a2 2 0 0 1 .365-.5L8.5 2.586A2 2 0 0 1 9 2.22ZM11 2v5a2 2 0 0 1-2 2H4v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-7ZM8 16a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1Zm1-5a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9Z" clip-rule="evenodd"/>
+            <div class="card shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <span class="me-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none"
+                            viewBox="0 0 24 24">
+                            <path stroke="#5E17EB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 2.221V7H4.221a2 2 0 0 1 .365-.5L8.5 2.586A2 2 0 0 1 9 2.22ZM11 2v5a2 2 0 0 1-2 2H4v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-7ZM8 16a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1Zm1-5a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9Z" />
                         </svg>
                     </span>
-                    <div class="d-inline">
-                        <h5 class="wfs-text-default"><b>Transaction Details</b></h5>
-                        <span class="wfs-text-default" style="opacity: .75;">Detailed information of this transaction.</span>
+                    <div>
+                        <h5 class="card-title mb-1"><b>Transaction Details</b></h5>
+                        <p class="card-text text-muted mb-0" style="font-size:14px;">
+                            Detailed information of this transaction.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="col-lg-4">
+
+        <!-- Breadcrumbs -->
+        <div class="col-lg-4 d-flex align-items-center justify-content-lg-end mt-3 mt-lg-0">
             <nav class="breadcrumb-container" aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" style="transform: translate(0px, -2px);">
-                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m4 10v-2m3 2v-6m3 6v-3m4-11v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
-                        </svg>
-                        <a href="{{ route('transactions.index') }}">Transactions</a>
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item d-flex align-items-center">
+                        <span role="button" style="cursor:pointer;"
+                            onclick="window.location.href='{{ route('transactions.index_new', ['details' => 'OREM']) }}'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                viewBox="0 0 24 24" class="me-1" style="transform: translateY(-2px);">
+                                <path stroke="#5E17EB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 3v4a1 1 0 0 1-1 1H5m4 10v-2m3 2v-6m3 6v-3m4-11v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z" />
+                            </svg>
+                        </span>
+                        <a href="{{ route('transactions.index_new', ['details' => 'OREM']) }}">Transactions</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Details</li>
                 </ol>
             </nav>
         </div>
-
     </div>
 </div>
 
@@ -72,37 +81,115 @@
             <div class="card box-shadow border-medium" style="height: fit-content; margin-bottom: 15px;">
                 <div class="card-body" style="padding: 5px 20px;">
                     <h4 class="mt-10"><b style="font-size: 20px; font-weight: 900 !important;">Transaction Type : {{ $data->details}}</b></h4>
-                    <div class="form-group">
-                        <div class="row mt-20">
-                            <div class="col-4"> <span class="text-muted">Requestor</span>
-                                <br>
-                                <p><b>{{$data->requestor}}</b></p>
+                    
+                    @if ($transactionDetails)
+                        <div class="form-group">
+                            <div class="row mt-20">
+                                <div class="col-4">
+                                    <span class="text-muted">Week #</span>
+                                    <br>
+                                    <p><b>{{ data_get($transactionDetails, 'header.week_no') }}</b></p>
+                                </div>
+                                <div class="col-4">
+                                    <span class="text-muted">Location</span>
+                                    <br>
+                                    <p><b>{{ data_get($transactionDetails, 'header.location_area.name') }}</b></p>
+                                </div>
+                                <div class="col-4">
+                                    <span class="text-muted">Date and Time of Inspection</span>
+                                    <br>
+                                    <p>
+                                        <b>
+                                            {{ \Carbon\Carbon::parse(
+                                                data_get($transactionDetails, 'header.date_of_inspection').' '.data_get($transactionDetails, 'header.time_of_inspection')
+                                            )->format('M d, Y g:i A') }}
+                                        </b>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="col-4"> <span class="text-muted">Email</span>
-                                <br>
-                                <p><b>{{ $data->email }}</b></p>
-                            </div>
-                            <div class="col-4"> <span class="text-muted">Date Submitted</span>
-                                <br>
-                                <p><b>{{ $data->created_at }}</b></p>
+
+                            <div class="row mt-20">
+                                <div class="col-4">
+                                    <span class="text-muted">Inspected By</span>
+                                    <br>
+                                    <p><b>{{ data_get($transactionDetails, 'header.inspected_by') }}</b></p>
+                                </div>
+                                <div class="col-4">
+                                    <span class="text-muted">Remarks</span>
+                                    <br>
+                                    <p><b>{{ data_get($transactionDetails, 'header.remarks') }}</b></p>
+                                </div>
                             </div>
                         </div>
-                        <div class="row mt-20">
-                            <div class="col-4"> <span class="text-muted">Transaction #</span>
-                                <br>
-                                <input type="hidden" name="referenceid" id="referenceid" value="{{$data->transid}}"/>
-                                <p><b>{{$data->transid}}</b></p>
+
+                        <div class="form-group">
+                            {{-- 
+                            <h6 class="mb-3 text-uppercase text-secondary" style="font-size: 0.85rem; letter-spacing: 0.5px;">
+                            </h6>
+                             --}}
+                            <table class="table table-sm table-hover align-middle" style="font-size: 0.75rem;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 20%;">Category</th>
+                                        <th>Description</th>
+                                        <th style="width: 25%;">Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse (data_get($transactionDetails, 'header.checklists', []) as $i => $check)
+                                        @if (strtolower(data_get($check, 'checks')) === 'no')
+                                            <tr class="table-danger">
+                                                <td>{{ data_get($check, 'checklist.category.description') }}</td>
+                                                <td>{{ data_get($check, 'checklist.description') }}</td>
+                                                <td>{{ data_get($check, 'remarks') }}</td>
+                                            </tr>
+                                        @endif
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted fst-italic">
+                                                No failed checklist items
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="form-group">
+                            <div class="row mt-20">
+                                <div class="col-4"> <span class="text-muted">Requestor</span>
+                                    <br>
+                                    <p><b>{{$data->requestor}}</b></p>
+                                </div>
+                                <div class="col-4"> <span class="text-muted">Email</span>
+                                    <br>
+                                    <p><b>{{ $data->email }}</b></p>
+                                </div>
+                                <div class="col-4"> <span class="text-muted">Date Submitted</span>
+                                    <br>
+                                    <p><b>{{ $data->created_at }}</b></p>
+                                </div>
                             </div>
-                            <div class="col-4"> <span class="text-muted">Amount</span>
-                                <br>
-                                <p><b>{{ number_format($data->totalamount,2) }}</b></p>
-                            </div>
-                            <div class="col-4"> <span class="text-muted">Status</span>
-                                <br>
-                                <p><b style="font-weight: 900">{{$data->status}}</b></p>
+                            <div class="row mt-20">
+                                <input type ="hidden" name="referenceid" id="referenceid" value="{{$data->transid}}"/>
+                                <div class="col-4"> <span class="text-muted">Transaction #</span>
+                                    <br>
+                                    <p><b>{{$data->transid}}</b></p>
+                                </div>
+                                @if(strpos($data->details, 'OREM') !== false)
+                                    <div class="col-4"> <span class="text-muted">Amount</span>
+                                        <br>
+                                        <p><b>{{ number_format($data->totalamount,2) }}</b></p>
+                                    </div>
+                                @endif
+                                <div class="col-4"> <span class="text-muted">Status</span>
+                                    <br>
+                                    <p><b style="font-weight: 900">{{$data->status}}</b></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
+                    
                     <div class="alert alert-info">To view the whole transaction details. Please click this <a href="{{$data->source_url}}" target="_blank" class="text-blue"><strong>link</strong></a>.</div>
                 </div>
 
@@ -605,20 +692,18 @@
         'GATEPASS' // TESTING
     ];
 
-    // MARK UPDATE
     const apiEndpoints = {
         'OREM': "{{env('APP_API_OREM')}}/receiver.php",
         'VBS': "http://127.0.0.1:8000/api/wfs/vbs_approvals.php", // CHANGE IN PRODUCTION
         'GATEPASS': "{{env('APP_API_GATEPASS')}}api/wfs/update-request"
     }
 
-    // MARK UPDATE
     const apiKeys = {
         'OREM': 'base64:Hxle0o3dpTUGQlpJy3dBbMhlDu9Y98uMqZEqFe/Upcs=',
         'VBS': "{{env('APP_API_VBS_TOKEN')}}",
         'GATEPASS': "{{env('APP_API_GATEPASS_TOKEN')}}",
     }
- 
+
     $(document).ready(function() {
         $.ajaxSetup({
             headers: {
@@ -671,7 +756,6 @@
         var overall_status = '';
         var wfs_trans_stat = '';
         var bg = "";
-
 
         if (status == 'HOLD' || status == 'CANCELLED') {
 
@@ -782,15 +866,19 @@
                                 swal("Connection from other application was interrupted!");
                             }
                         });
- 
-                    // MARK UPDATE
+
+                    
                     } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
+                        console.log('HERE');
+                        console.log(trans_type);
                         console.log(apiEndpoints[trans_type]);
+                        console.log(apiKeys[trans_type]);
                         $.ajax({
+                            // url: "http://172.16.11.65/vbs/public/api/wfs/receiver.php", // CHANGE IN PRODUCTION
                             url: apiEndpoints[trans_type],
                             type: "POST",
                             data: {
-                                reference_id: $('#referenceid').val(),
+                            reference_id: $('#referenceid').val(),
                                 trans_id: rqid,
                                 workflow_token: apiKeys[trans_type],
                                 details: trans_type,
@@ -846,7 +934,8 @@
                             error: function(response) {
                                 swal("Connection from other application was interrupted!");
                             }
-                        });
+                        }); 
+                        
                     } else {
                         $.ajax({
                             url: "{{ route('status.updateStatus') }}",
@@ -1009,7 +1098,6 @@
                             }
                         });
 
-                    // MARK UPDATE
                     } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
                         $.ajax({
                             url: apiEndpoints[trans_type],
@@ -1067,7 +1155,7 @@
                                 swal("Connection from other application was interrupted!");
                             }
                         });
-
+*/
                     } else {
                         $.ajax({
                             // type: 'POST',
@@ -1237,7 +1325,6 @@
                             }
                         });
 
-                    // MARK UPDATE
                     } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
                         $.ajax({
                             url: apiEndpoints[trans_type],
