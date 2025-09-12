@@ -496,14 +496,19 @@
 
         });
     </script>
+    @if(request('details') == "OREM")
+        <script type="text/javascript">
+            $(".table_cb").on("change", function() {
+                if ($(".table_details_cb:checked").length > 0) {
+                    $('#btnbatchsubmit').show();
+                } else {
+                    $('#btnbatchsubmit').hide();
+                }
+            });
+        </script>
+    @endif
+
     <script type="text/javascript">
-        $(".table_cb").on("change", function() {
-            if ($(".table_details_cb:checked").length > 0) {
-                $('#btnbatchsubmit').show();
-            } else {
-                $('#btnbatchsubmit').hide();
-            }
-        });
         $(document).on('click', "#checkall", function() {
 
             if ($("#checkall").is(':checked')) {

@@ -105,7 +105,7 @@ class ApprovalStatusController extends Controller
         // dd($request->trans_type);
         $transaction = Transaction::find($request->rid);
 
-        if ($transaction /*&& $transaction->details === "HK"*/ && $transaction->approval_url) {
+        if ($transaction && $transaction->details === "HK" && $transaction->approval_url) {
             $response = $this->submit_status_to_app($transaction->approval_url, $transaction->id, $request->ov_stat, $request->remarks);
 
             if (!$response) {
