@@ -49,65 +49,29 @@
         <div class="w-100 d-flex justify-content-start gap-5" style="padding-left: 38px;">
 
             <!-- Modify each navigation to ROUTING -->
-            <div class="nav-card position-relative {{ request('details') === 'OREM' ? 'active' : '' }}">
-                <span class="nav-card-icon rounded text-light">
-                    {{ $pendingAll["OREM"] }}
-                </span>
-                <a href="{{ route('transactions.index_new', ['details' => 'OREM']) }}"
-                    class="nav-link px-3 py-2 shadow bg-white rounded main-nav-btn">
-                    &nbsp;&nbsp; <b style="color: #434343;">OREM</b>
-                </a>
-            </div>
+            @php
+                $navItems = [
+                    'OREM'     => 'OREM',
+                    'IMP'      => 'MRS-IMP',
+                    'OSTR'     => 'OSTR',
+                    'GATEPASS' => 'GATE PASS',
+                    'HK'       => 'HOUSEKEEPING',
+                    'VBS'      => 'VBS',
+                ];
+            @endphp
 
-            <div class="nav-card position-relative {{ request('details') === 'IMP' ? 'active' : '' }}">
-                <span class="nav-card-icon rounded text-light">
-                    {{ $pendingAll["IMP"] }}
-                </span>
-                <a href="{{ route('transactions.index_new', ['details' => 'IMP']) }}"
+            @foreach($navItems as $code => $label)
+                <div class="nav-card position-relative {{ request('details') === $code ? 'active' : '' }}">
+                    <span class="nav-card-icon rounded text-light">
+                        <a class="text-white" href="{{ route('transactions.index_new', ['details' => $code]) }}">{{ $pendingAll[$code] ?? 0 }}</a>
+                    </span>
+                    <a href="{{ route('transactions.index_new', ['details' => $code]) }}"
                     class="nav-link px-3 py-2 shadow bg-white rounded main-nav-btn">
-                    &nbsp;&nbsp; <b style="color: #434343;">MRS-IMP</b>
-                </a>
-            </div>
+                        &nbsp;&nbsp; <b style="color: #434343;">{{ $label }}</b>
+                    </a>
+                </div>
+            @endforeach
 
-            <div class="nav-card position-relative {{ request('details') === 'OSTR' ? 'active' : '' }}">
-                <span class="nav-card-icon rounded text-light">
-                    {{ $pendingAll["OSTR"] }}
-                </span>
-                <a href="{{ route('transactions.index_new', ['details' => 'OSTR']) }}"
-                    class="nav-link px-3 py-2 shadow bg-white rounded main-nav-btn">
-                    &nbsp;&nbsp; <b style="color: #434343;">OSTR</b>
-                </a>
-            </div>
-
-            <div class="nav-card position-relative {{ request('details') === 'GATEPASS' ? 'active' : '' }}">
-                <span class="nav-card-icon rounded text-light">
-                    {{ $pendingAll["GATEPASS"] }}
-                </span>
-                <a href="{{ route('transactions.index_new', ['details' => 'GATEPASS']) }}"
-                    class="nav-link px-3 py-2 shadow bg-white rounded main-nav-btn">
-                    &nbsp;&nbsp; <b style="color: #434343;">GATE PASS</b>
-                </a>
-            </div>
-
-            <div class="nav-card position-relative {{ request('details') === 'HK' ? 'active' : '' }}">
-                <span class="nav-card-icon rounded text-light">
-                    {{ $pendingAll["HK"] }}
-                </span>
-                <a href="{{ route('transactions.index_new', ['details' => 'HK']) }}"
-                    class="nav-link px-3 py-2 shadow bg-white rounded main-nav-btn">
-                    &nbsp;&nbsp; <b style="color: #434343;">HOUSEKEEPING</b>
-                </a>
-            </div>
-
-            <div class="nav-card position-relative {{ request('details') === 'VBS' ? 'active' : '' }}">
-                <span class="nav-card-icon rounded text-light">
-                    {{ $pendingAll["VBS"] }}
-                </span>
-                <a href="{{ route('transactions.index_new', ['details' => 'VBS']) }}"
-                    class="nav-link px-3 py-2 shadow bg-white rounded main-nav-btn">
-                    &nbsp;&nbsp; <b style="color: #434343;">VBS</b>
-                </a>
-            </div>
         </div>
     </div>
     <div class="container-fluid wfs-transactions">
@@ -207,6 +171,28 @@
                     </nav>
                 </div>
             </div>
+        </div>
+
+        <div class="title-card-class bg-white ml-4" id="btnbatchsubmit" style="display:none; min-height: 70px; position: relative;">
+            <small class="action-pill-label">Action Selection</small>
+            <button type="submit" class= "d-flex mr-2 btn btn-default btn-primary btn-batch-submit box-shadow" data-action="APPROVED" style="font-size: 12px; font-weight: 600;">
+                <svg class="mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 0 0-1 1H6a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2a1 1 0 0 0-1-1H9Zm1 2h4v2h1a1 1 0 1 1 0 2H9a1 1 0 0 1 0-2h1V4Zm5.707 8.707a1 1 0 0 0-1.414-1.414L11 14.586l-1.293-1.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4Z" clip-rule="evenodd"/>
+                </svg>
+                Batch Approval
+            </button> 
+            <button type="submit" class= "d-flex mr-2 btn btn-dark btn-batch-submit box-shadow" data-action="HOLD" style="font-size: 12px; font-weight: 600;">
+                <svg class="mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm9-3a1 1 0 1 0-2 0v6a1 1 0 1 0 2 0V9Zm4 0a1 1 0 1 0-2 0v6a1 1 0 1 0 2 0V9Z" clip-rule="evenodd"/>
+                </svg>
+                Batch Hold
+            </button> 
+            <button onclick="openBatchReasonModal()" class="d-flex btn btn-default btn-danger box-shadow" data-action="CANCELLED" style="font-size: 12px; font-weight: 600;"> 
+                <svg class="mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm7.707-3.707a1 1 0 0 0-1.414 1.414L10.586 12l-2.293 2.293a1 1 0 1 0 1.414 1.414L12 13.414l2.293 2.293a1 1 0 0 0 1.414-1.414L13.414 12l2.293-2.293a1 1 0 0 0-1.414-1.414L12 10.586 9.707 8.293Z" clip-rule="evenodd"/>
+                </svg>
+                Batch Cancel
+            </button> 
         </div>
 
         <div class="col-md-12 table-container-class">
