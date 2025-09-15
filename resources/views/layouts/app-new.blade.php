@@ -188,14 +188,34 @@
                                         <a class="menu-link text-uppercase" href="javascript:void(0)">
                                             <div>Transactions</div>
                                         </a>
+                                        @php
+                                            $subMenuItems = [
+                                                'OREM'     => 'OREM',
+                                                'IMP'      => 'IMP',
+                                                'OSTR'     => 'OSTR',
+                                                'GATEPASS' => 'Gatepass',
+                                                'HK'       => 'Housekeeping',
+                                                'VBS'      => 'VBS',
+                                            ];
+
+                                            $userTransTypes = [];
+                                            if (!empty(Auth::user()->trans_types)) {
+                                                $userTransTypes = explode('|', Auth::user()->trans_types);
+                                            }
+                                        @endphp
+
                                         <ul class="sub-menu">
-                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'OREM']) }}">OREM</a></li>
-                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'IMP']) }}">IMP</a></li>
-                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'OSTR']) }}">OSTR</a></li>
-                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'GATEPASS']) }}">Gatepass</a></li>
-                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'HK']) }}">Housekeeping</a></li>
-                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'VBS']) }}">VBS</a></li>
+                                            @foreach($subMenuItems as $code => $label)
+                                                @if(in_array($code, $userTransTypes))
+                                                    <li>
+                                                        <a class="menu-link" href="{{ route('transactions.index_new', ['details' => $code]) }}">
+                                                            {{ $label }}
+                                                        </a>
+                                                    </li>
+                                                @endif
+                                            @endforeach
                                         </ul>
+
                                     </li>
 
                                     <!-- History -->

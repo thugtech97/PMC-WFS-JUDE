@@ -158,10 +158,18 @@ class UserController extends Controller
             'user_type' => 'required'
         ]);
 
-        $approver = User::find($id);
-        $approver->update($request->all());
+        $approver = User::findOrFail($id);
+        $data = $request->except('trans_types');
 
-        return redirect(route('approvers.index'))->with('successMsg',' Approver details has been updated.');
+        if ($request->has('trans_types')) {
+            $data['trans_types'] = implode('|', $request->input('trans_types'));
+        } else {
+            $data['trans_types'] = null;
+        }
+
+        $approver->update($data);
+
+        return redirect()->route('approvers.index')->with('successMsg', 'Approver details have been updated.');
     }
 
     /**

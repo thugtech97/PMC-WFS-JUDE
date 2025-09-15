@@ -58,19 +58,30 @@
                     'HK'       => 'HOUSEKEEPING',
                     'VBS'      => 'VBS',
                 ];
+
+                // Get current user’s allowed types
+                $userTransTypes = [];
+                if (!empty(Auth::user()->trans_types)) {
+                    $userTransTypes = explode('|', Auth::user()->trans_types);
+                }
             @endphp
 
             @foreach($navItems as $code => $label)
-                <div class="nav-card position-relative {{ request('details') === $code ? 'active' : '' }}">
-                    <span class="nav-card-icon rounded text-light">
-                        <a class="text-white" href="{{ route('transactions.index_new', ['details' => $code]) }}">{{ $pendingAll[$code] ?? 0 }}</a>
-                    </span>
-                    <a href="{{ route('transactions.index_new', ['details' => $code]) }}"
-                    class="nav-link px-3 py-2 shadow bg-white rounded main-nav-btn">
-                        &nbsp;&nbsp; <b style="color: #434343;">{{ $label }}</b>
-                    </a>
-                </div>
+                @if(in_array($code, $userTransTypes))
+                    <div class="nav-card position-relative {{ request('details') === $code ? 'active' : '' }}">
+                        <span class="nav-card-icon rounded text-light">
+                            <a class="text-white" href="{{ route('transactions.index_new', ['details' => $code]) }}">
+                                {{ $pendingAll[$code] ?? 0 }}
+                            </a>
+                        </span>
+                        <a href="{{ route('transactions.index_new', ['details' => $code]) }}"
+                        class="nav-link px-3 py-2 shadow bg-white rounded main-nav-btn">
+                            &nbsp;&nbsp; <b style="color: #434343;">{{ $label }}</b>
+                        </a>
+                    </div>
+                @endif
             @endforeach
+
 
         </div>
     </div>

@@ -156,6 +156,31 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="trans_types">Transaction Types</label>
+                                <select id="trans_types" class="form-control select2-multiple" name="trans_types[]" multiple="multiple" placeholder="SELECT TRANSACTION TYPES">
+                                    {{-- Preselected values from DB (pipe-separated) --}}
+                                    @if (!empty($data->trans_types))
+                                        @foreach(explode('|', $data->trans_types) as $tt)
+                                            <option value="{{ $tt }}" selected>{{ $tt }}</option>
+                                        @endforeach
+                                    @endif
+
+                                    <optgroup label="AVAILABLE TYPES">
+                                        <option value="OREM">OREM</option>
+                                        <option value="IMP">IMP</option>
+                                        <option value="OSTR">OSTR</option>
+                                        <option value="GATEPASS">GATEPASS</option>
+                                        <option value="HK">HK</option>
+                                        <option value="VBS">VBS</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     
                     <button type="submit" class="btn btn-primary mr-2">Save Changes</button>
                     <button class="btn btn-light">Cancel</button>
@@ -174,6 +199,11 @@
         $('#division').select2();
         $('#department').select2();
         $('#section').select2();
+        $('#trans_types').select2({
+            placeholder: "SELECT TRANSACTION TYPES",
+            allowClear: true,
+            width: '100%'
+        });
     });
 
     $(document).ready(function(){
