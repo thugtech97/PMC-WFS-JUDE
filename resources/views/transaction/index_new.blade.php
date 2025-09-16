@@ -771,6 +771,18 @@
                     `,
                     placement: 'bottom'
                 },
+                {
+                    id: '#main-menu-navigation',
+                    title: 'Menu Overview',
+                    content: `
+                        <ul>
+                            <li><strong>Transactions: </strong>Hover over this menu to view all available applications. Click on an application to see all your pending transactions.</li>
+                            <li><strong>History: </strong>This page displays all transactions you have approved or disapproved. Use this section to review past transactions.</li>
+                            <li><strong>Documentation: </strong>Access the user manual and other reference materials here.</li>
+                        </ul>
+                    `,
+                    placement: 'bottom'
+                },
 
             ];
 

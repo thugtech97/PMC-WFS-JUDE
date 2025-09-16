@@ -183,7 +183,7 @@
 
                             <!-- Primary Navigation
       ============================================= -->
-                            <nav class="primary-menu">
+                            <nav class="primary-menu" id="main_menu">
 
                                 <ul class="menu-container">
                                     <!-- Transactions with dropdown -->
