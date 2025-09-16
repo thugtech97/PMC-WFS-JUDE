@@ -10,8 +10,37 @@
 
                 <nav id="main-menu-navigation" class="navigation-main d-flex align-items-center mr-4">
                     @if(auth()->user()->user_type != 'ict')
-                         <div class="nav-item mr-2">
-                            <a href="{{ route('transactions.index')}}"></i><span class="nav-text-class @if(\Route::current()->getName() == 'transactions.index') active @endif">Transactions</span></a>
+                         <div class="menu-item mr-2">
+                            <!-- <a href="{{ route('transactions.index')}}"></i><span class="nav-text-class @if(\Route::current()->getName() == 'transactions.index') active @endif">Transactions</span></a> -->
+                            <a href="javascript:void(0)"></i><span class="nav-text-class">Transactions</span></a>
+                            @php
+                                $subMenuItems = [
+                                    'OREM'     => 'OREM',
+                                    'IMP'      => 'IMP',
+                                    'OSTR'     => 'OSTR',
+                                    'GATEPASS' => 'Gatepass',
+                                    'HK'       => 'Housekeeping',
+                                    'VBS'      => 'VBS',
+                                ];
+
+                                $userTransTypes = [];
+                                if (!empty(Auth::user()->trans_types)) {
+                                    $userTransTypes = explode('|', Auth::user()->trans_types);
+                                }
+                            @endphp
+
+                            <ul class="sub-menu" style="transform: translate(0px, 7px);">
+                                @foreach($subMenuItems as $code => $label)
+                                    @if(in_array($code, $userTransTypes))
+                                        <li class="px-2">
+                                            <a class="menu-link r-menu" href="{{ route('transactions.index_new', ['details' => $code]) }}">
+                                                <b>{{ $label }}</b>
+                                            </a>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            </ul>
+
                         </div> 
                         {{-- <div class="nav-item mr-2">
                             <a href="{{ route('transactions.index')}}"></i><span class="nav-text-class @if(\Route::current()->getName() == 'transactions.index') active @endif">Pending Transactions</span></a>

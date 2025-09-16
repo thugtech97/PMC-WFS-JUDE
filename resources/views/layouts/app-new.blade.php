@@ -153,6 +153,9 @@
             display: block;
         }
 
+        .menu-item .menu-link {
+            border-radius: 4px !important;
+        }
     </style>
     @yield('pagecss')
 </head>
@@ -162,13 +165,13 @@
 
         <!-- Document Wrapper
  ============================================= -->
-        <div id="wrapper" style="min-height: 1000px; background-color: #efefef;">
+        <div id="wrapper" style="min-height: auto; background-color: #efefef; padding-bottom: 80px;">
 
             <!-- Header
   ============================================= -->
             <header id="header" class="border-bottom-0 no-sticky transparent-header header-custom-size">
                 <div id="header-wrap">
-                    <div class="container">
+                    <div class="container-fluid py-2">
                         <div class="d-flex justify-content-between w-100">
 
                             <!-- Logo
@@ -268,7 +271,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="header-wrap-clone"></div>
+                <div class="header-wrap-clone" style="height: 85px;"></div>
             </header><!-- #header end -->
 
             <!-- Content (Sample navigation only for testing purposes, modify as per required)

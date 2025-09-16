@@ -1,4 +1,4 @@
-@extends('layouts.app-new')
+@extends('layouts.app')
 
 @section('pagecss')
     <link rel="stylesheet" href="{{ asset('assets/plugins/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}">
@@ -41,12 +41,23 @@
         body[data-theme="earth-theme"] .table-container-class #data-table_wrapper .dt-buttons a.dt-button.buttons-excel {
             background-color: #f38500 !important;
         }
+
+        .dt-buttons a.dt-button.buttons-excel.buttons-html5.btn.btn-primary.text-white {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-card .badge {
+            padding: 6px 8px;
+            font-size: 10px;
+            top: -8px !important;
+        }
     </style>
 @endsection
 
 @section('content')
     <div class="top-nav my-2 px-2 mb-5">
-        <div class="w-100 d-flex justify-content-start gap-5" style="padding-left: 38px;">
+        <div class="w-100 d-flex justify-content-start gap-5" style="padding-left: 10px;">
 
             <!-- Modify each navigation to ROUTING -->
             @php
@@ -68,15 +79,33 @@
 
             @foreach($navItems as $code => $label)
                 @if(in_array($code, $userTransTypes))
-                    <div class="nav-card position-relative {{ request('details') === $code ? 'active' : '' }}">
-                        <span class="nav-card-icon rounded text-light">
+                    <div class="nav-card mx-4 position-relative {{ request('details') === $code ? 'active' : '' }}">
+                        <span class="nav-card-icon rounded text-light shadow-sm">
                             <a class="text-white" href="{{ route('transactions.index_new', ['details' => $code]) }}">
-                                {{ $pendingAll[$code] ?? 0 }}
+                                <i class="bi-briefcase-fill"></i>
+                                @if($label == 'OREM')
+                                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
+                                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 0 0-2 2v4m5-6h8M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m0 0h3a2 2 0 0 1 2 2v4m0 0v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6m18 0s-4 2-9 2-9-2-9-2m9-2h.01"/>
+                                    </svg>
+                                @elseif($label == 'MRS-IMP')
+                                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
+                                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16M8 14h8m-4-7V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"/>
+                                    </svg>
+                                @elseif($label == 'OSTR')
+                                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
+                                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-3 5h3m-6 0h.01M12 16h3m-6 0h.01M10 3v4h4V3h-4Z"/>
+                                    </svg>
+                                @else
+                                    {{ $pendingAll[$code] ?? 0 }}
+                                @endif
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ $pendingAll[$code] ?? 0 }}
+                                </span>
                             </a>
                         </span>
                         <a href="{{ route('transactions.index_new', ['details' => $code]) }}"
-                        class="nav-link px-3 py-2 shadow bg-white rounded main-nav-btn">
-                            &nbsp;&nbsp; <b style="color: #434343;">{{ $label }}</b>
+                        class="nav-link px-3 py-2 shadow-sm bg-white rounded main-nav-btn d-flex" style="border: 1px solid #e7e7e7">
+                            <b style="color: #434343; display: flex; align-items: center;">&nbsp;&nbsp; {{ $label }}</b>
                         </a>
                     </div>
                 @endif
