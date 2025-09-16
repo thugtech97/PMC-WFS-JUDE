@@ -52,12 +52,130 @@
             font-size: 10px;
             top: -8px !important;
         }
+
+        .dropcap {
+            float: left;
+            font-size: 42px;
+            line-height: 1;
+            margin: 0 5px 0 0;
+            text-transform: uppercase;
+        }
+
+        .tour-backdrop {
+            position: fixed;
+            inset: 0;
+            /* background: rgba(0, 0, 0, .6); */
+            background: rgba(0, 0, 0, .8);
+            z-index: 1040;
+            display: none;
+        }
+
+        .tour-tooltip {
+            position: absolute;
+            max-width: 600px;
+            background: #fff;
+            border-radius: .5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .2);
+            z-index: 1042;
+            display: none;
+        }
+
+        .tour-tooltip .tour-header {
+            padding: .75rem 1rem;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+        }
+
+        .tour-tooltip .tour-body {
+            padding: .75rem 1rem;
+            font-size: .95rem;
+        }
+
+        .tour-tooltip .tour-footer {
+            padding: .75rem 1rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: .5rem;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tour-highlight {
+            position: relative !important;
+            z-index: 1041 !important;
+            box-shadow: 0 0 0 3px #fcf80bff, 0 10px 30px rgba(0, 0, 0, .25);
+            border-radius: .5rem;
+            transition: box-shadow .2s ease;
+        }
+
+        .tour-start-btn {
+            position: fixed;
+            left: 18px;
+            bottom: 18px;
+            z-index: 1030;
+        }
+
+        .tour-tooltip:after {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            transform: rotate(45deg);
+            box-shadow: -1px -1px 0 0 #eee;
+        }
+
+        .tour-body ul { margin: 0 0 .5rem 1.25rem; padding: 0; }
+        .tour-body li { margin: .25rem 0; }
+        .tour-body p { margin: 0 0 .5rem 0; }
     </style>
 @endsection
 
 @section('content')
+    <div class="modal fade text-start bs-example-modal-centered" id="intro_mods" tabindex="-1" role="dialog" aria-labelledby="centerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">PMC - Workflow System</h5>
+
+                </div>
+                <div class="modal-body">
+                    
+                    <div style="background: linear-gradient(90deg,rgba(250, 250, 250, 1) 0%, rgba(250, 244, 220, 1) 50%);min-height: 100px;position: relative;">
+                    
+                        <p class="mb-0" style="padding-top:20px;">
+                            <span class="dropcap">W</span>elcome to the <strong>Workflow System.</strong> We’ve recently deployed new updates. Would you like a quick tour to guide you through these changes?
+                        </p>
+            
+                    </div>
+                </div>
+
+                <div class="modal-footer d-flex justify-content-between align-items-center">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="dontShowTutorial">
+                        <label class="form-check-label" for="dontShowTutorial">Don't show this again</label>
+                    </div>
+
+                    <div class="d-flex">
+                        <button id="btnYes" type="button" class="btn btn-primary btn-sm mr-2">
+                            <i class="fa fa-check"></i> Yes, Guide Me
+                        </button>
+                        <button id="btnNo" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">
+                            No, I'm Good
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary tour-start-btn" id="start-tour-btn">
+        Start Tutorial <i class="fa-solid fa-circle-question ms-2"></i>
+    </button>
+
     <div class="top-nav my-2 px-2 mb-5">
-        <div class="w-100 d-flex justify-content-start gap-5" style="padding-left: 10px;">
+        <div class="w-100 d-flex justify-content-start gap-5" style="padding-left: 10px;" id="transaction_types">
 
             <!-- Modify each navigation to ROUTING -->
             @php
@@ -138,7 +256,7 @@
                         </div>
                     </div>
 
-                    <div class="d-flex align-items-stretch ml-4 w-100">
+                    <div class="d-flex align-items-stretch ml-4 w-100" id="transaction_summary">
                         <!-- Pending -->
                         <div class="card shadow-sm flex-grow-1 mr-2">
                             <div class="card-body d-flex align-items-center">
@@ -269,7 +387,7 @@
                 </select>
             </div>
 
-            <div class="row">
+            <div id="transaction_table" class="row" style="background-color: white;">
 
                 <table class="table table-stripped" id="data-table" style="width:100%">
 
@@ -609,5 +727,267 @@
             $('#batchCancelModal').modal('show');
             $('.selected_action_cancel').val('CANCELLED');
         }
+    </script>
+    <script>
+        $(function() {
+            const $backdrop = $('<div class="tour-backdrop" id="tour-backdrop"></div>').appendTo(document.body);
+            const $tooltip = $(`
+                <div class="tour-tooltip" id="tour-tooltip" role="dialog" aria-live="polite" aria-modal="true" >
+                    <div class="tour-header" id="tour-title">Step</div>
+                    <div class="tour-body" id="tour-content">Content</div>
+                    <div class="tour-footer">
+                        <div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="tour-prev">Previous</button>
+                            <button type="button" class="btn btn-sm btn-primary" id="tour-next">Next</button>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-link text-danger" id="tour-close">Close</button>
+                    </div>
+                </div>
+            `).appendTo(document.body);
+
+            const TOUR_STEPS = [
+                {
+                    id: '#transaction_types',
+                    title: 'Transaction Types',
+                    content: `Our systems are now organized by application. Each card displays your total pending items per application. By clicking a card, you can view all pending transactions requiring your review in the table below.`,
+                    placement: 'bottom'
+                },
+                {
+                    id: '#transaction_table',
+                    title: 'Transaction Table',
+                    content: `By default, when the system loads, you will see all your pending OREM transactions. Clicking on a card will update the table columns to display the key data relevant to that application. Additionally, clicking on a transaction number will now show details customized to the corresponding application type.`,
+                    placement: 'top'
+                },
+                {
+                    id: '#transaction_summary',
+                    title: 'Summary',
+                    content: `
+                        <p>This section provides an overview of all ongoing transactions you are involved in:</p>
+                        <ul>
+                            <li><strong>Pending:</strong> Total number of transactions currently requiring your review. You can view the details for each application through the cards above.</li>
+                            <li><strong>Upcoming:</strong> Total number of ongoing transactions that have not yet reached your review stage.</li>
+                            <li><strong>In Progress:</strong> Total number of transactions that are still active, including those you have already approved but are awaiting final approval from other approvers.</li>
+                        </ul>
+                    `,
+                    placement: 'bottom'
+                },
+
+            ];
+
+            let stepIndex = 0;
+            let $current = null;
+
+            function ensureInView($el) {
+                const offset = $el.offset().top - 120; // header cushion
+                $('html, body').stop(true).animate({
+                    scrollTop: Math.max(offset, 0)
+                }, 300);
+            }
+
+            function placeTooltip($el, placement) {
+                const el = $el[0];
+                const rect = el.getBoundingClientRect();
+
+                const tip = $tooltip[0];
+                const tipRect = tip.getBoundingClientRect();
+
+                $tooltip.css({
+                    visibility: 'hidden',
+                    display: 'block'
+                });
+                const w = $tooltip.outerWidth();
+                const h = $tooltip.outerHeight();
+                $tooltip.css({
+                    visibility: '',
+                    display: 'none'
+                });
+
+                const scrollY = window.scrollY || document.documentElement.scrollTop;
+                const scrollX = window.scrollX || document.documentElement.scrollLeft;
+
+                let top, left, arrowTop, arrowLeft, arrowTransform = 'rotate(45deg)';
+
+                switch (placement) {
+                    case 'top':
+                        top = rect.top + scrollY - h - 12;
+                        left = rect.left + scrollX + (rect.width - w) / 2;
+                        arrowTop = h - 6;
+                        arrowLeft = (w / 2) - 6;
+                        arrowTransform = 'rotate(45deg)';
+                        break;
+                    case 'left':
+                        top = rect.top + scrollY + (rect.height - h) / 2;
+                        left = rect.left + scrollX - w - 12;
+                        arrowTop = (h / 2) - 6;
+                        arrowLeft = w - 6;
+                        arrowTransform = 'rotate(45deg)';
+                        break;
+                    case 'right':
+                        top = rect.top + scrollY + (rect.height - h) / 2;
+                        left = rect.right + scrollX + 12;
+                        arrowTop = (h / 2) - 6;
+                        arrowLeft = -6;
+                        arrowTransform = 'rotate(45deg)';
+                        break;
+                    default: // bottom
+                        top = rect.bottom + scrollY + 12;
+                        left = rect.left + scrollX + (rect.width - w) / 2;
+                        arrowTop = -6;
+                        arrowLeft = (w / 2) - 6;
+                        arrowTransform = 'rotate(45deg)';
+                }
+
+                left = Math.max(12 + scrollX, Math.min(left, (scrollX + window.innerWidth - w - 12)));
+
+                $tooltip.css({
+                    top: Math.max(12 + scrollY, top),
+                    left,
+                    display: 'block'
+                });
+                $tooltip[0].style.setProperty('--arrow-top', arrowTop + 'px');
+                $tooltip[0].style.setProperty('--arrow-left', arrowLeft + 'px');
+
+                $tooltip.css('--arrow-top', arrowTop + 'px');
+                $tooltip.css('--arrow-left', arrowLeft + 'px');
+                $tooltip[0].style.setProperty('--arrow-rotate', arrowTransform);
+
+                const after = $tooltip[0];
+                after.style.setProperty('--arrow-top', arrowTop + 'px');
+                $tooltip.get(0).style.setProperty('--arrow-top', arrowTop + 'px');
+                $tooltip.get(0).style.setProperty('clip-path', 'none');
+                $tooltip.get(0).style.setProperty('--arrow-left', arrowLeft + 'px');
+                const style = document.createElement('style');
+                style.id = 'tour-arrow-style';
+                style.textContent = `
+                    #tour-tooltip:after{
+                        top:${arrowTop}px; left:${arrowLeft}px; transform:${arrowTransform};
+                    }`;
+                document.getElementById('tour-arrow-style')?.remove();
+                document.head.appendChild(style);
+            }
+
+            function clearHighlight() {
+                if ($current) $current.removeClass('tour-highlight');
+                $current = null;
+                $('#tour-arrow-style').remove();
+            }
+
+            function showStep(i) {
+                if (i < 0 || i >= TOUR_STEPS.length) return;
+
+                stepIndex = i;
+                const step = TOUR_STEPS[i];
+                const $el = $(step.id);
+
+                if ($el.length === 0) {
+                    if (i < TOUR_STEPS.length - 1) return showStep(i + 1);
+                    if (i > 0) return showStep(i - 1);
+                    return endTour();
+                }
+
+                ensureInView($el);
+
+                clearHighlight();
+                $el.addClass('tour-highlight');
+                $current = $el;
+
+                $('#tour-title').text(step.title || `Step ${i+1}`);
+                $('#tour-content').html(step.content || '');
+                $('#tour-prev').prop('disabled', i === 0);
+                $('#tour-next').text(i === TOUR_STEPS.length - 1 ? 'Finish' : 'Next');
+
+                $backdrop.show();
+                placeTooltip($el, step.placement || 'bottom');
+
+                $tooltip.show();
+            }
+
+            function endTour() {
+                clearHighlight();
+                $tooltip.hide();
+                $backdrop.hide();
+            }
+
+            $('#tour-prev').on('click', function() {
+                showStep(stepIndex - 1);
+            });
+            $('#tour-next').on('click', function() {
+                if (stepIndex >= TOUR_STEPS.length - 1) return endTour();
+                showStep(stepIndex + 1);
+            });
+            $('#tour-close, #tour-backdrop').on('click', endTour);
+
+
+            $(window).on('resize', function() {
+                if ($current && $tooltip.is(':visible')) {
+                    placeTooltip($current, TOUR_STEPS[stepIndex].placement || 'bottom');
+                }
+            });
+
+            function startTour(from = 0) {
+                showStep(from);
+            }
+
+            $('#start-tour-btn').on('click', function() {
+                startTour(0);
+            });
+
+        });
+    </script>
+
+     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var $introModals = $('#intro_mods');
+            var $dontShow = $('#dontShowTutorial');
+            var LS_KEY = 'hideIntroModal';
+
+            // Check localStorage before showing
+            if (localStorage.getItem(LS_KEY) !== 'true') {
+                $introModals.modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                $introModals.modal('show');
+            }
+
+            // When modal is about to hide, check the checkbox
+            $introModals.on('hide.bs.modal', function () {
+                if ($dontShow.length && $dontShow.prop('checked')) {
+                    localStorage.setItem(LS_KEY, 'true');
+                }
+            });
+
+            // Buttons
+            const btnYes = document.getElementById('btnYes');
+            const btnNo = document.getElementById('btnNo');
+
+            // Placeholder for starting a tour (replace with your real handler)
+            btnYes.addEventListener('click', function () {
+                // Example: redirect, start your guided tour, etc.
+                // For now, just close the modal.
+                $introModals.modal('hide');
+                // You can trigger your actual walkthrough here.
+                //console.log('Starting walkthrough…');
+                const start_tutorial_btn = document.getElementById('start-tour-btn');
+                start_tutorial_btn.click();
+
+            });
+
+            btnNo.addEventListener('click', function () {
+
+                $.toast({
+                    heading: '',
+                    text: "Need a refresher later? Just hit the Tutorial button at the bottom-left corner.",
+                    showHideTransition: 'slide',
+                    icon: 'success',
+                    loaderBg: '#f96868',
+                    position: 'top-right',
+                    hideAfter: 10000 // <-- disappears after 4 seconds
+                });
+
+                $introModals.modal('hide');
+            });
+
+        });
     </script>
 @endsection
