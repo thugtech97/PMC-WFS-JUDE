@@ -654,7 +654,7 @@
 
         });
     </script>
-    @if(request('details') == "OREM")
+    @if(in_array(request('details'), ['OREM', 'OSTR', 'IMP']))
         <script type="text/javascript">
             $(".table_cb").on("change", function() {
                 if ($(".table_details_cb:checked").length > 0) {
