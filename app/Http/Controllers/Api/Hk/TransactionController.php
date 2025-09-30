@@ -110,7 +110,7 @@ class TransactionController extends Controller {
         DB::table($db.'.dbo.approval_status')->insert([
             'transaction_id'        => $insertedID,
             'approver_id'           => $data['approver_id'] ?? 0,
-            'alternate_approver_id' => 0,
+            'alternate_approver_id' => $data['approver_id'] ?? 0,
             'sequence_number'       => 0,
             'status'                => 'PENDING',
             'created_at'            => now(),
