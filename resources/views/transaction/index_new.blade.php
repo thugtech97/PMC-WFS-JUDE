@@ -947,59 +947,52 @@
         });
     </script>
 
-     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var $introModals = $('#intro_mods');
-            var $dontShow = $('#dontShowTutorial');
-            var LS_KEY = 'hideIntroModal';
+    @if(in_array(request('details'), ['OREM']))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var $introModals = $('#intro_mods');
+                var $dontShow = $('#dontShowTutorial');
+                var LS_KEY = 'hideIntroModal';
 
-            // Check localStorage before showing
-            if (localStorage.getItem(LS_KEY) !== 'true') {
-                $introModals.modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
-                $introModals.modal('show');
-            }
-
-            // When modal is about to hide, check the checkbox
-            $introModals.on('hide.bs.modal', function () {
-                if ($dontShow.length && $dontShow.prop('checked')) {
-                    localStorage.setItem(LS_KEY, 'true');
+                if (localStorage.getItem(LS_KEY) !== 'true') {
+                    $introModals.modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    $introModals.modal('show');
                 }
-            });
 
-            // Buttons
-            const btnYes = document.getElementById('btnYes');
-            const btnNo = document.getElementById('btnNo');
-
-            // Placeholder for starting a tour (replace with your real handler)
-            btnYes.addEventListener('click', function () {
-                // Example: redirect, start your guided tour, etc.
-                // For now, just close the modal.
-                $introModals.modal('hide');
-                // You can trigger your actual walkthrough here.
-                //console.log('Starting walkthrough…');
-                const start_tutorial_btn = document.getElementById('start-tour-btn');
-                start_tutorial_btn.click();
-
-            });
-
-            btnNo.addEventListener('click', function () {
-
-                $.toast({
-                    heading: '',
-                    text: "Need a refresher later? Just hit the Tutorial button at the bottom-left corner.",
-                    showHideTransition: 'slide',
-                    icon: 'success',
-                    loaderBg: '#f96868',
-                    position: 'top-right',
-                    hideAfter: 10000 // <-- disappears after 4 seconds
+                $introModals.on('hide.bs.modal', function () {
+                    if ($dontShow.length && $dontShow.prop('checked')) {
+                        localStorage.setItem(LS_KEY, 'true');
+                    }
                 });
 
-                $introModals.modal('hide');
-            });
+                const btnYes = document.getElementById('btnYes');
+                const btnNo = document.getElementById('btnNo');
 
-        });
-    </script>
+                btnYes.addEventListener('click', function () {
+                    $introModals.modal('hide');
+                    const start_tutorial_btn = document.getElementById('start-tour-btn');
+                    start_tutorial_btn.click();
+
+                });
+
+                btnNo.addEventListener('click', function () {
+                    $.toast({
+                        heading: '',
+                        text: "Need a refresher later? Just hit the Tutorial button at the bottom-left corner.",
+                        showHideTransition: 'slide',
+                        icon: 'success',
+                        loaderBg: '#f96868',
+                        position: 'top-right',
+                        hideAfter: 10000
+                    });
+
+                    $introModals.modal('hide');
+                });
+
+            });
+        </script>
+    @endif
 @endsection
