@@ -110,7 +110,7 @@ class TransactionController extends Controller {
         DB::table($db.'.dbo.approval_status')->insert([
             'transaction_id'        => $insertedID,
             'approver_id'           => $data['approver_id'] ?? 0,
-            'alternate_approver_id' => $data['approver_id'] ?? 0,
+            'alternate_approver_id' => $data['alternate_approver_id'] ?? 0,
             'sequence_number'       => 0,
             'status'                => 'PENDING',
             'created_at'            => now(),
@@ -153,5 +153,36 @@ class TransactionController extends Controller {
             'status' => 'success',
             'history' => $history
         ], 200);
+    }
+
+    public function getActiveManagers()
+    {
+        $managers = User::where('designation', 'MANAGER')
+                        ->where('isActive', 1)
+                        ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $managers
+        ]);
+    }
+
+    public function getManagerById($id)
+    {
+        $manager = User::where('designation', 'MANAGER')
+                       ->where('isActive', 1)
+                       ->find($id);
+
+        if (!$manager) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Manager not found or inactive.'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $manager
+        ]);
     }
 }

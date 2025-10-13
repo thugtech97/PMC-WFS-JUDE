@@ -27,3 +27,5 @@ Route::post('wfs-sync',[TransactionsController::class, 'transmit']);
 
 Route::post('store_transaction', [TransactionController::class, 'store']);
 Route::post('get_history', [TransactionController::class, 'history']);
+Route::get('/managers', [TransactionController::class, 'getActiveManagers']);
+Route::get('/managers/{id}', [TransactionController::class, 'getManagerById']);
