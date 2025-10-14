@@ -159,6 +159,7 @@ class TransactionController extends Controller {
     {
         $managers = User::where('designation', 'MANAGER')
                         ->where('isActive', 1)
+                        ->orderBy('name', 'asc')
                         ->get();
 
         return response()->json([
