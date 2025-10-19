@@ -210,7 +210,10 @@ class TransactionsController extends Controller
 
         foreach ($transTypes as $ttype) {
             $pendingAll[$ttype] = DB::table('approval_status')
-                ->join('users', 'users.id', '=', 'approval_status.approver_id')
+                ->join('users', function ($join) {
+                    $join->on('users.id', '=', 'approval_status.approver_id')
+                        ->orOn('users.id', '=', 'approval_status.alternate_approver_id');
+                })
                 ->join('transactions', 'transactions.id', '=', 'approval_status.transaction_id')
                 ->where('users.id', auth()->id())
                 ->where('transactions.status', 'PENDING')

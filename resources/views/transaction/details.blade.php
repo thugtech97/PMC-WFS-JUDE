@@ -117,7 +117,7 @@
                                 <div class="col-4">
                                     <span class="text-muted">Remarks</span>
                                     <br>
-                                    <p><b>{{ data_get($transactionDetails, 'header.remarks') }}</b></p>
+                                    <p><b>{!! data_get($transactionDetails, 'header.remarks') !!}</b></p>
                                 </div>
                             </div>
                         </div>

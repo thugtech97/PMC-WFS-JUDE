@@ -176,8 +176,6 @@
 
     <div class="top-nav my-2 px-2 mb-5">
         <div class="w-100 d-flex justify-content-start gap-5" style="padding-left: 10px;" id="transaction_types">
-
-            <!-- Modify each navigation to ROUTING -->
             @php
                 $navItems = [
                     'OREM'     => 'OREM',
@@ -188,7 +186,6 @@
                     'VBS'      => 'VBS',
                 ];
 
-                // Get current user’s allowed types
                 $userTransTypes = [];
                 if (!empty(Auth::user()->trans_types)) {
                     $userTransTypes = explode('|', Auth::user()->trans_types);
@@ -200,36 +197,56 @@
                     <div class="nav-card mx-4 position-relative {{ request('details') === $code ? 'active' : '' }}">
                         <span class="nav-card-icon rounded text-light shadow-sm">
                             <a class="text-white" href="{{ route('transactions.index_new', ['details' => $code]) }}">
-                                <i class="bi-briefcase-fill"></i>
                                 @if($label == 'OREM')
                                     <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-                                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 0 0-2 2v4m5-6h8M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m0 0h3a2 2 0 0 1 2 2v4m0 0v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6m18 0s-4 2-9 2-9-2-9-2m9-2h.01"/>
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7H5a2 2 0 0 0-2 2v4m5-6h8M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m0 0h3a2 2 0 0 1 2 2v4m0 0v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6m18 0s-4 2-9 2-9-2-9-2m9-2h.01"/>
                                     </svg>
+
                                 @elseif($label == 'MRS-IMP')
                                     <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-                                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16M8 14h8m-4-7V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"/>
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 10h16M8 14h8m-4-7V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"/>
                                     </svg>
+
                                 @elseif($label == 'OSTR')
                                     <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-                                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-3 5h3m-6 0h.01M12 16h3m-6 0h.01M10 3v4h4V3h-4Z"/>
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-3 5h3m-6 0h.01M12 16h3m-6 0h.01M10 3v4h4V3h-4Z"/>
                                     </svg>
-                                @else
-                                    {{ $pendingAll[$code] ?? 0 }}
+
+                                @elseif($label == 'GATE PASS')
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 8V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2M3 8v10a2 2 0 0 0 2 2h4m-6-12h18M21 8v10a2 2 0 0 1-2 2h-4m-4 0v-4m0 4-2-2m2 2 2-2"/>
+                                    </svg>
+
+                                @elseif($label == 'HOUSEKEEPING')
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 21h18M5 21v-6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6M9 9V4h6v5M9 9h6M12 9v4"/>
+                                    </svg>
+
+                                @elseif($label == 'VBS')
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 3v18m-9-9h18M4.5 4.5l15 15M19.5 4.5l-15 15"/>
+                                    </svg>
+
                                 @endif
+
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                     {{ $pendingAll[$code] ?? 0 }}
                                 </span>
                             </a>
                         </span>
                         <a href="{{ route('transactions.index_new', ['details' => $code]) }}"
-                        class="nav-link px-3 py-2 shadow-sm bg-white rounded main-nav-btn d-flex" style="border: 1px solid #e7e7e7">
+                            class="nav-link px-3 py-2 shadow-sm bg-white rounded main-nav-btn d-flex" style="border: 1px solid #e7e7e7">
                             <b style="color: #434343; display: flex; align-items: center;">&nbsp;&nbsp; {{ $label }}</b>
                         </a>
                     </div>
                 @endif
             @endforeach
-
-
         </div>
     </div>
     <div class="container-fluid wfs-transactions">
@@ -480,7 +497,7 @@
                                         class="badge @if ($t->status == 'FULLY APPROVED') badge-success @elseif($t->status == 'CANCELLED') badge-danger @else badge-secondary @endif">{{ $t->status }}</label>
                                 </td>
                                 <td style="max-width: 260px !important; overflow: hidden; text-overflow: ellipsis;">
-                                    {{ $t->purpose }}</td>
+                                    {!! $t->purpose !!}</td>
                                 <td hidden>
                                     <div class="list-actions">
                                         <a href="{{ route('transaction.details', $t->id) }}"><i
