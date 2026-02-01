@@ -67,7 +67,7 @@
                                                         <p class="mb-0 d-inline-block">{{ $a->updated_last_by ? strtoupper($a->updated_last_by):''}}</p>
                                                         <br>
                                                         @endif                                                        
-                                                        <p class="mb-0 d-inline-block">[{{ $a->sequence_number }}] {{ $a->user->name }}</p>
+                                                        <p class="mb-0 d-inline-block">{{-- $a->sequence_number --}} {{ $a->user->name }}</p>
                                                         <br>
                                                         <p class="mb-5 d-inline-block text-uppercase"><small>{{ $a->user->designation }}</small></p>
                                                     </div> 

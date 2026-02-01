@@ -175,6 +175,7 @@
                                         <option value="GATEPASS">GATEPASS</option>
                                         <option value="HK">HK</option>
                                         <option value="VBS">VBS</option>
+                                        <option value="FMS">FMS</option>
                                     </optgroup>
                                 </select>
                             </div>

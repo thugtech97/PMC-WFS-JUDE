@@ -199,6 +199,7 @@
                                                 'GATEPASS' => 'Gatepass',
                                                 'HK'       => 'Housekeeping',
                                                 'VBS'      => 'VBS',
+                                                'FMS'      => 'FMS',
                                             ];
 
                                             $userTransTypes = [];

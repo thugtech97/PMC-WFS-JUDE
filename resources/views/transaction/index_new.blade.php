@@ -132,43 +132,46 @@
 @endsection
 
 @section('content')
-    <div class="modal fade text-start bs-example-modal-centered" id="intro_mods" tabindex="-1" role="dialog" aria-labelledby="centerModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="myModalLabel">PMC - Workflow System</h5>
 
-                </div>
-                <div class="modal-body">
-                    
-                    <div style="background: linear-gradient(90deg,rgba(250, 250, 250, 1) 0%, rgba(250, 244, 220, 1) 50%);min-height: 100px;position: relative;">
-                    
-                        <p class="mb-0" style="padding-top:20px;">
-                            <span class="dropcap">W</span>elcome to the <strong>Workflow System.</strong> We’ve recently deployed new updates. Would you like a quick tour to guide you through these changes?
-                        </p>
-            
+    @if(request('details') == 'OREM')
+        <div class="modal fade text-start bs-example-modal-centered" id="intro_mods" tabindex="-1" role="dialog" aria-labelledby="centerModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myModalLabel">PMC - Workflow System</h5>
+
                     </div>
-                </div>
-
-                <div class="modal-footer d-flex justify-content-between align-items-center">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="dontShowTutorial">
-                        <label class="form-check-label" for="dontShowTutorial">Don't show this again</label>
+                    <div class="modal-body">
+                        
+                        <div style="background: linear-gradient(90deg,rgba(250, 250, 250, 1) 0%, rgba(250, 244, 220, 1) 50%);min-height: 100px;position: relative;">
+                        
+                            <p class="mb-0" style="padding-top:20px;">
+                                <span class="dropcap">W</span>elcome to the <strong>Workflow System.</strong> We’ve recently deployed new updates. Would you like a quick tour to guide you through these changes?
+                            </p>
+                
+                        </div>
                     </div>
 
-                    <div class="d-flex">
-                        <button id="btnYes" type="button" class="btn btn-primary btn-sm mr-2">
-                            <i class="fa fa-check"></i> Yes, Guide Me
-                        </button>
-                        <button id="btnNo" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">
-                            No, I'm Good
-                        </button>
-                    </div>
+                    <div class="modal-footer d-flex justify-content-between align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="dontShowTutorial">
+                            <label class="form-check-label" for="dontShowTutorial">Don't show this again</label>
+                        </div>
 
+                        <div class="d-flex">
+                            <button id="btnYes" type="button" class="btn btn-primary btn-sm mr-2">
+                                <i class="fa fa-check"></i> Yes, Guide Me
+                            </button>
+                            <button id="btnNo" type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">
+                                No, I'm Good
+                            </button>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
     <button type="button" class="btn btn-primary tour-start-btn" id="start-tour-btn">
         Start Tutorial <i class="fa-solid fa-circle-question ms-2"></i>
@@ -176,6 +179,8 @@
 
     <div class="top-nav my-2 px-2 mb-5">
         <div class="w-100 d-flex justify-content-start gap-5" style="padding-left: 10px;" id="transaction_types">
+
+            <!-- Modify each navigation to ROUTING -->
             @php
                 $navItems = [
                     'OREM'     => 'OREM',
@@ -184,14 +189,15 @@
                     'GATEPASS' => 'GATE PASS',
                     'HK'       => 'HOUSEKEEPING',
                     'VBS'      => 'VBS',
+                    'FMS'      => 'FMS',
                 ];
-
+ 
                 $userTransTypes = [];
                 if (!empty(Auth::user()->trans_types)) {
                     $userTransTypes = explode('|', Auth::user()->trans_types);
                 }
             @endphp
-
+ 
             @foreach($navItems as $code => $label)
                 @if(in_array($code, $userTransTypes))
                     <div class="nav-card mx-4 position-relative {{ request('details') === $code ? 'active' : '' }}">
@@ -202,41 +208,48 @@
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 7H5a2 2 0 0 0-2 2v4m5-6h8M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m0 0h3a2 2 0 0 1 2 2v4m0 0v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6m18 0s-4 2-9 2-9-2-9-2m9-2h.01"/>
                                     </svg>
-
+ 
                                 @elseif($label == 'MRS-IMP')
                                     <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M4 10h16M8 14h8m-4-7V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"/>
                                     </svg>
-
+ 
                                 @elseif($label == 'OSTR')
                                     <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-3 5h3m-6 0h.01M12 16h3m-6 0h.01M10 3v4h4V3h-4Z"/>
                                     </svg>
-
+ 
                                 @elseif($label == 'GATE PASS')
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M3 8V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2M3 8v10a2 2 0 0 0 2 2h4m-6-12h18M21 8v10a2 2 0 0 1-2 2h-4m-4 0v-4m0 4-2-2m2 2 2-2"/>
                                     </svg>
-
+ 
                                 @elseif($label == 'HOUSEKEEPING')
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M3 21h18M5 21v-6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6M9 9V4h6v5M9 9h6M12 9v4"/>
                                     </svg>
-
+ 
                                 @elseif($label == 'VBS')
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 3v18m-9-9h18M4.5 4.5l15 15M19.5 4.5l-15 15"/>
                                     </svg>
+ 
+                                @elseif($label == 'FMS')
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 3h7a1 1 0 0 1 1 1v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a1 1 0 0 1 1-1Zm0 0v4h8M18 7v9a2 2 0 1 1-4 0V7h4Zm0 0h1a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3h-1"/>
+                                    </svg>
 
                                 @endif
-
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    {{ $pendingAll[$code] ?? 0 }}
+ 
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill {{ $pendingAll[$code] > 0 ? 'bg-danger' : 'bg-success'  }}">
+                                    {!! $pendingAll[$code] > 0 ? $pendingAll[$code] : '<i class="fa fa-check"></i>' !!}
+                                    {{-- {{ $pendingAll[$code] ?? 0 }} --}}
                                 </span>
                             </a>
                         </span>
@@ -247,6 +260,8 @@
                     </div>
                 @endif
             @endforeach
+
+
         </div>
     </div>
     <div class="container-fluid wfs-transactions">
@@ -419,7 +434,8 @@
                         @endif
                         <th>Approval Summary</th>
                         <th>Overall Status</th>
-                        <th>Purpose</th>
+                        <th>
+                        {{ (request('details') == "HK") ? 'Week #' : 'Purpose' }}</th>
                         <th hidden>Action</th>
                     </thead>
 
