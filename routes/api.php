@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Hk\TransactionController;
 use App\Http\Controllers\Api\V1\TransactionsController;
+use App\Http\Controllers\Api\Fms\FmsTransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,3 +30,8 @@ Route::post('store_transaction', [TransactionController::class, 'store']);
 Route::post('get_history', [TransactionController::class, 'history']);
 Route::get('/managers', [TransactionController::class, 'getActiveManagers']);
 Route::get('/managers/{id}', [TransactionController::class, 'getManagerById']);
+Route::post('/transactions/status', [TransactionController::class ,'getStatuses']);
+
+//FOR FMS
+Route::post('fms/store_transaction', [FmsTransactionController::class, 'store']);
+

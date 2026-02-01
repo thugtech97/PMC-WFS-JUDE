@@ -110,7 +110,8 @@ class TransactionController extends Controller {
         DB::table($db.'.dbo.approval_status')->insert([
             'transaction_id'        => $insertedID,
             'approver_id'           => $data['approver_id'] ?? 0,
-            'alternate_approver_id' => $data['alternate_approver_id'] ?? 0,
+            // 'alternate_approver_id' => $data['alternate_approver_id'] ?? 0,
+            'alternate_approver_id' => $data['alternate_approver_id'] ?? $data['approver_id'],
             'sequence_number'       => 0,
             'status'                => 'PENDING',
             'created_at'            => now(),
@@ -185,5 +186,51 @@ class TransactionController extends Controller {
             'success' => true,
             'data' => $manager
         ]);
+    }
+
+    public function getStatuses(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (empty($ids)) {
+            return response()->json([
+                'message' => 'Transaction IDs are required'
+            ], 422);
+        }
+
+        // Normalize IDs
+        if (is_string($ids)) {
+            $ids = explode(',', $ids);
+        }
+
+        $results = DB::table('transactions as t')
+            ->join('approval_status as a', 't.id', '=', 'a.transaction_id')
+            ->whereIn('t.ref_req_no', $ids)
+            ->where('t.details', 'HK')
+            ->where('t.status', '<>', 'Pending')
+            ->select(
+                't.transid',
+                't.ref_req_no',
+                't.status',
+                'a.updated_at',
+                'a.updated_last_by_name'
+            )
+            ->get();
+
+        $arrayStatus = [];
+
+        foreach ($results as $row) {
+            $updatedAt = $row->updated_at
+                ? date('Y-m-d H:i:s', strtotime($row->updated_at))
+                : null;
+
+            $arrayStatus[] =
+                $row->ref_req_no . '|' .
+                $row->status . '|' .
+                $updatedAt . '|' .
+                $row->updated_last_by_name;
+        }
+
+        return response()->json($arrayStatus);
     }
 }
