@@ -676,7 +676,11 @@
         'OSTR',
         'IMP',
         'VBS', // TESTING
+<<<<<<< HEAD
         'GATEPASS',
+=======
+        'GATEPASS', // TESTING
+>>>>>>> ccccaf8befe32cb4b105b8cce1c6f0137874fc02
         'FMS' // TESTING
     ];
 
@@ -685,7 +689,11 @@
         'OREM': "{{env('APP_API_OREM')}}/receiver.php",
         'VBS': "{{env('APP_API_VBS')}}/api/wfs/vbs_approvals.php", // CHANGE IN PRODUCTION
         'GATEPASS': "{{env('APP_API_GATEPASS')}}/api/wfs/update-request"
+<<<<<<< HEAD
         // 'GATEPASS': "env('APP_API_GATEPASS')/api/wfs/update-from-wfs" 
+=======
+        // 'GATEPASS': "https://mlsvrvstrgtpass.philsaga.com:8025/api/wfs/update-from-wfs" 
+>>>>>>> ccccaf8befe32cb4b105b8cce1c6f0137874fc02
 
     }
 
@@ -862,6 +870,10 @@
  
                     // MARK UPDATE
                     } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
+<<<<<<< HEAD
+=======
+                        console.log(apiEndpoints[trans_type]);
+>>>>>>> ccccaf8befe32cb4b105b8cce1c6f0137874fc02
                         $.ajax({
                             url: apiEndpoints[trans_type],
                             type: "POST",

@@ -108,6 +108,10 @@ class ApprovalStatusController extends Controller
         Log::info('FMS:  '. $transaction);
         Log::info('FMS:  '. $request->ov_stat);
 
+<<<<<<< HEAD
+=======
+        
+>>>>>>> ccccaf8befe32cb4b105b8cce1c6f0137874fc02
         if ($transaction && $transaction->details === "HK" && $transaction->approval_url) {
             Log::info('HK BEFORE SUBMIT:  '. $transaction);
             $response = $this->submit_status_to_app($transaction->approval_url, $transaction->id, $request->ov_stat, $request->remarks);
@@ -119,6 +123,21 @@ class ApprovalStatusController extends Controller
                 ], 500);
             }
         }
+        
+
+        //FOR FMS START
+        if ($transaction && $transaction->details === "FMS" && $transaction->approval_url) {
+            Log::info('FMS BEFORE SUBMIT:  '. $transaction);
+            $response = $this->submit_status_to_app($transaction->approval_url, $transaction->id, $request->ov_stat, $request->remarks);
+
+            if (!$response) {
+                return response()->json([
+                    'status' => "success",
+                    'message' => 'Failed to submit status to source application.',
+                ], 500);
+            }
+        }
+        //FOR FMS END
 
         //FOR FMS START
         if ($transaction && $transaction->details === "FMS" && $transaction->approval_url) {
