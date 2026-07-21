@@ -59,8 +59,16 @@ class LoginController extends Controller
 
             } else {
 
-                return redirect()->route('transactions.index_new', ['details' => 'OREM']);
+                $user = Auth::user();
 
+                if (!empty($user->trans_types)) {
+                    $transTypes = explode('|', $user->trans_types);
+                    $firstType = $transTypes[0] ?? 'OREM'; // fallback to OREM if empty
+                } else {
+                    $firstType = 'OREM'; // default if no trans_types
+                }
+
+                return redirect()->route('transactions.index_new', ['details' => $firstType]);
             }  
         }
         else

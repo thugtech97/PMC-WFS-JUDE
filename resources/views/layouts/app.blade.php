@@ -35,7 +35,119 @@
         body .wrapper .header-top,
         body .wrapper .page-wrap .main-content {
             padding-left: 0px;
-        }    
+        }
+
+        /*Custom CSS for revamp UI 2025 j.p.*/
+        .main-nav-btn {
+            height: 44px;
+            min-width: 100px;
+        }
+
+        .nav-card:hover .nav-card-icon {
+            /*background: linear-gradient(25deg, #001e47, blue);*/
+            background: var(--primary-color);
+            cursor: pointer;
+            top: -10px;
+            transition: all .2s;
+        }
+
+        .nav-card:hover b {
+            color: var(--primary-color) !important;
+        }
+
+        .nav-card:hover button {
+            box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .nav-card-icon {
+            padding: 12px 14px;
+            background-color: gray;
+            position: absolute;
+            top: 1px;
+            left: -25px;
+            /*background: linear-gradient(45deg, blue, #001e47);*/
+            background: var(--primary-color);
+        }
+
+        .nav-card.active .nav-card-icon {
+            top: -10px;
+        }
+
+        .nav-card.active b {
+            color: var(--primary-color) !important;
+        }
+
+        .menu-container {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        .menu-item {
+            position: relative;
+        }
+
+        .menu-link {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-weight: 600;
+            color: #333;
+            transition: color 0.2s;
+        }
+
+        .menu-link:hover {
+            color: #5E17EB;
+        }
+
+        .sub-menu {
+            list-style: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px 0;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1000;
+        }
+
+        .sub-menu .menu-link {
+            padding: 8px 15px;
+            font-weight: 500;
+            color: #333;
+            white-space: nowrap;
+        }
+
+        .sub-menu .menu-link:hover {
+            background: #f7f7f7;
+            color: #5E17EB;
+        }
+        
+        .menu-item:hover > .sub-menu {
+            display: block;
+        }
+
+        .menu-item .menu-link {
+            border-radius: 4px !important;
+        }
+        .page-header.mt-4 .card.shadow-sm.flex-grow-1,
+        .page-header.mt-4 .card.shadow-sm.flex-grow-1.mr-2 {
+            margin-bottom: 0px;
+        }
+
+        .r-menu:hover {
+            background-color: var(--primary-color) !important;
+            color: var(--text-default-hover-color) !important;
+            box-shadow: var(--box-shadow) !important;
+        }
+
+        /*End 2025 j.p.*/
     </style>
 
     <body id="wfs-wrapper" data-theme="sky-theme">

@@ -1,4 +1,4 @@
-@extends('layouts.app-new')
+@extends('layouts.app')
 
 @section('pagecss')
 <link rel="stylesheet" href="{{ asset('assets/css/dialog/sweetalert2.min.css') }}">
@@ -31,47 +31,38 @@
 </style>
 @section('content')
 <div class="page-header" style="margin-bottom: 15px;">
-    <div class="row align-items-center px-3">
-        <!-- Header Card -->
+    <div class="row align-items-end px-3">
+
         <div class="col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-body d-flex align-items-center">
-                    <span class="me-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none"
-                            viewBox="0 0 24 24">
-                            <path stroke="#5E17EB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 2.221V7H4.221a2 2 0 0 1 .365-.5L8.5 2.586A2 2 0 0 1 9 2.22ZM11 2v5a2 2 0 0 1-2 2H4v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-7ZM8 16a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1Zm1-5a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9Z" />
+            <div class="page-header-title">
+                <div class="title-card-class wfs-bg">
+                    <span class="svg-class">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                          <path fill-rule="evenodd" d="M9 2.221V7H4.221a2 2 0 0 1 .365-.5L8.5 2.586A2 2 0 0 1 9 2.22ZM11 2v5a2 2 0 0 1-2 2H4v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-7ZM8 16a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1Zm1-5a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H9Z" clip-rule="evenodd"/>
                         </svg>
                     </span>
-                    <div>
-                        <h5 class="card-title mb-1"><b>Transaction Details</b></h5>
-                        <p class="card-text text-muted mb-0" style="font-size:14px;">
-                            Detailed information of this transaction.
-                        </p>
+                    <div class="d-inline">
+                        <h5 class="wfs-text-default"><b>Transaction Details</b></h5>
+                        <span class="wfs-text-default" style="opacity: .75;">Detailed information of this transaction.</span>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Breadcrumbs -->
-        <div class="col-lg-4 d-flex align-items-center justify-content-lg-end mt-3 mt-lg-0">
+        
+        <div class="col-lg-4">
             <nav class="breadcrumb-container" aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item d-flex align-items-center">
-                        <span role="button" style="cursor:pointer;"
-                            onclick="window.location.href='{{ route('transactions.index_new', ['details' => 'OREM']) }}'">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
-                                viewBox="0 0 24 24" class="me-1" style="transform: translateY(-2px);">
-                                <path stroke="#5E17EB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 3v4a1 1 0 0 1-1 1H5m4 10v-2m3 2v-6m3 6v-3m4-11v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z" />
-                            </svg>
-                        </span>
-                        <a href="{{ route('transactions.index_new', ['details' => 'OREM']) }}">Transactions</a>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" style="transform: translate(0px, -2px);">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m4 10v-2m3 2v-6m3 6v-3m4-11v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
+                        </svg>
+                        <a href="{{ route('transactions.index') }}">Transactions</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Details</li>
                 </ol>
             </nav>
         </div>
+
     </div>
 </div>
 
@@ -81,7 +72,6 @@
             <div class="card box-shadow border-medium" style="height: fit-content; margin-bottom: 15px;">
                 <div class="card-body" style="padding: 5px 20px;">
                     <h4 class="mt-10"><b style="font-size: 20px; font-weight: 900 !important;">Transaction Type : {{ $data->details}}</b></h4>
-                    
                     @if ($transactionDetails)
                         <div class="form-group">
                             <div class="row mt-20">
@@ -107,7 +97,7 @@
                                     </p>
                                 </div>
                             </div>
-
+ 
                             <div class="row mt-20">
                                 <div class="col-4">
                                     <span class="text-muted">Inspected By</span>
@@ -117,11 +107,11 @@
                                 <div class="col-4">
                                     <span class="text-muted">Remarks</span>
                                     <br>
-                                    <p><b>{{ data_get($transactionDetails, 'header.remarks') }}</b></p>
+                                    <p><b>{!! data_get($transactionDetails, 'header.remarks') !!}</b></p>
                                 </div>
                             </div>
                         </div>
-
+ 
                         <div class="form-group">
                             {{-- 
                             <h6 class="mb-3 text-uppercase text-secondary" style="font-size: 0.85rem; letter-spacing: 0.5px;">
@@ -155,41 +145,38 @@
                             </table>
                         </div>
                     @else
-                        <div class="form-group">
-                            <div class="row mt-20">
-                                <div class="col-4"> <span class="text-muted">Requestor</span>
-                                    <br>
-                                    <p><b>{{$data->requestor}}</b></p>
-                                </div>
-                                <div class="col-4"> <span class="text-muted">Email</span>
-                                    <br>
-                                    <p><b>{{ $data->email }}</b></p>
-                                </div>
-                                <div class="col-4"> <span class="text-muted">Date Submitted</span>
-                                    <br>
-                                    <p><b>{{ $data->created_at }}</b></p>
-                                </div>
+                    <div class="form-group">
+                        <div class="row mt-20">
+                            <div class="col-4"> <span class="text-muted">Requestor</span>
+                                <br>
+                                <p><b>{{$data->requestor}}</b></p>
                             </div>
-                            <div class="row mt-20">
-                                <input type ="hidden" name="referenceid" id="referenceid" value="{{$data->transid}}"/>
-                                <div class="col-4"> <span class="text-muted">Transaction #</span>
-                                    <br>
-                                    <p><b>{{$data->transid}}</b></p>
-                                </div>
-                                @if(strpos($data->details, 'OREM') !== false)
-                                    <div class="col-4"> <span class="text-muted">Amount</span>
-                                        <br>
-                                        <p><b>{{ number_format($data->totalamount,2) }}</b></p>
-                                    </div>
-                                @endif
-                                <div class="col-4"> <span class="text-muted">Status</span>
-                                    <br>
-                                    <p><b style="font-weight: 900">{{$data->status}}</b></p>
-                                </div>
+                            <div class="col-4"> <span class="text-muted">Email</span>
+                                <br>
+                                <p><b>{{ $data->email }}</b></p>
+                            </div>
+                            <div class="col-4"> <span class="text-muted">Date Submitted</span>
+                                <br>
+                                <p><b>{{ $data->created_at }}</b></p>
                             </div>
                         </div>
+                        <div class="row mt-20">
+                            <div class="col-4"> <span class="text-muted">Transaction #</span>
+                                <br>
+                                <input type="hidden" name="referenceid" id="referenceid" value="{{$data->transid}}"/>
+                                <p><b>{{$data->transid}}</b></p>
+                            </div>
+                            <div class="col-4"> <span class="text-muted">Amount</span>
+                                <br>
+                                <p><b>{{ number_format($data->totalamount,2) }}</b></p>
+                            </div>
+                            <div class="col-4"> <span class="text-muted">Status</span>
+                                <br>
+                                <p><b style="font-weight: 900">{{$data->status}}</b></p>
+                            </div>
+                        </div>
+                    </div>
                     @endif
-                    
                     <div class="alert alert-info">To view the whole transaction details. Please click this <a href="{{$data->source_url}}" target="_blank" class="text-blue"><strong>link</strong></a>.</div>
                 </div>
 
@@ -689,21 +676,26 @@
         'OSTR',
         'IMP',
         'VBS', // TESTING
-        'GATEPASS' // TESTING
+        'GATEPASS',
+        'FMS' // TESTING
     ];
 
+    // MARK UPDATE
     const apiEndpoints = {
         'OREM': "{{env('APP_API_OREM')}}/receiver.php",
-        'VBS': "http://127.0.0.1:8000/api/wfs/vbs_approvals.php", // CHANGE IN PRODUCTION
-        'GATEPASS': "{{env('APP_API_GATEPASS')}}api/wfs/update-request"
+        'VBS': "{{env('APP_API_VBS')}}/api/wfs/vbs_approvals.php", // CHANGE IN PRODUCTION
+        'GATEPASS': "{{env('APP_API_GATEPASS')}}/api/wfs/update-request"
+        // 'GATEPASS': "env('APP_API_GATEPASS')/api/wfs/update-from-wfs" 
+
     }
 
+    // MARK UPDATE
     const apiKeys = {
         'OREM': 'base64:Hxle0o3dpTUGQlpJy3dBbMhlDu9Y98uMqZEqFe/Upcs=',
         'VBS': "{{env('APP_API_VBS_TOKEN')}}",
-        'GATEPASS': "{{env('APP_API_GATEPASS_TOKEN')}}",
+        'GATEPASS': "{{ env('APP_API_GATEPASS_KEY') }}",
     }
-
+ 
     $(document).ready(function() {
         $.ajaxSetup({
             headers: {
@@ -757,6 +749,7 @@
         var wfs_trans_stat = '';
         var bg = "";
 
+
         if (status == 'HOLD' || status == 'CANCELLED') {
 
             overall_status = status;
@@ -777,7 +770,7 @@
             } else {
                 if(validTransTypes.includes(trans_type)) {
                 overall_status = 'PARTIALLY APPROVED';
-                wfs_trans_stat =  (trans_type === "OSTR") ? 'FULLY APPROVED' : 'IN-PROGRESS';
+                wfs_trans_stat =  (trans_type === "OSTR" || trans_type === "FMS") ? 'FULLY APPROVED' : 'IN-PROGRESS';
                 } else {
                     overall_status = 'PARTIALLY APPROVED';
                     wfs_trans_stat = 'FULLY APPROVED';
@@ -866,19 +859,14 @@
                                 swal("Connection from other application was interrupted!");
                             }
                         });
-
-                    
+ 
+                    // MARK UPDATE
                     } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
-                        console.log('HERE');
-                        console.log(trans_type);
-                        console.log(apiEndpoints[trans_type]);
-                        console.log(apiKeys[trans_type]);
                         $.ajax({
-                            // url: "http://172.16.11.65/vbs/public/api/wfs/receiver.php", // CHANGE IN PRODUCTION
                             url: apiEndpoints[trans_type],
                             type: "POST",
                             data: {
-                            reference_id: $('#referenceid').val(),
+                                reference_id: $('#referenceid').val(),
                                 trans_id: rqid,
                                 workflow_token: apiKeys[trans_type],
                                 details: trans_type,
@@ -929,13 +917,13 @@
                                         });
                                     },
                                 });
-                                // swal("Response: " + response);
+                                swal("Response: " + response);
                             },
                             error: function(response) {
+                                console.log(response);
                                 swal("Connection from other application was interrupted!");
                             }
-                        }); 
-                        
+                        });
                     } else {
                         $.ajax({
                             url: "{{ route('status.updateStatus') }}",
@@ -1013,7 +1001,7 @@
             } else {
                 if(validTransTypes.includes(trans_type)) {
                 overall_status = 'PARTIALLY APPROVED';
-                wfs_trans_stat =  (trans_type === "OSTR") ? 'HOLD' : 'IN-PROGRESS';
+                wfs_trans_stat =  (trans_type === "OSTR" || trans_type === "FMS") ? 'HOLD' : 'IN-PROGRESS';
                 } else {
                     overall_status = 'PARTIALLY APPROVED';
                     wfs_trans_stat = 'HOLD';
@@ -1098,11 +1086,13 @@
                             }
                         });
 
+                    // MARK UPDATE
                     } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
                         $.ajax({
                             url: apiEndpoints[trans_type],
                             type: "POST",
                             data: {
+                            reference_id: $('#referenceid').val(),
                                 trans_id: rqid,
                                 workflow_token: apiKeys[trans_type],
                                 details: trans_type,
@@ -1152,6 +1142,7 @@
                                 // swal(response);
                             },
                             error: function(response) {
+                                console.log(response);
                                 swal("Connection from other application was interrupted!");
                             }
                         });
@@ -1170,7 +1161,8 @@
                                 rstatus: status,
                                 remarks: remarks,
                                 ov_stat: wfs_trans_stat,
-                                curr_seq: curr_seq
+                                curr_seq: curr_seq,
+                                trans_type: trans_type
                             },
 
                             success: function(response) {
@@ -1201,6 +1193,7 @@
                                 swal("Failed to update status!");
                             }
                         });
+
                     }
                 }
 
@@ -1234,7 +1227,7 @@
             } else {
                 if(validTransTypes.includes(trans_type)) {
                 overall_status = 'PARTIALLY APPROVED';
-                wfs_trans_stat =  (trans_type === "OSTR") ? 'CANCELLED' : 'IN-PROGRESS';
+                wfs_trans_stat =  (trans_type === "OSTR" || trans_type === "FMS") ? 'CANCELLED' : 'IN-PROGRESS';
                 } else {
                     overall_status = 'PARTIALLY APPROVED';
                     wfs_trans_stat = 'CANCELLED';
@@ -1325,11 +1318,13 @@
                             }
                         });
 
+                    // MARK UPDATE
                     } else if (['VBS', 'GATEPASS'].includes(trans_type)) {
                         $.ajax({
                             url: apiEndpoints[trans_type],
                             type: "POST",
                             data: {
+                            reference_id: $('#referenceid').val(),
                                 trans_id: rqid,
                                 workflow_token: apiKeys[trans_type],
                                 details: trans_type,
@@ -1386,6 +1381,7 @@
                                 // swal("REQUEST COMPLETED: " + response);
                             },
                             error: function(response) {
+                                console.log(response);
                                 swal("Connection from other application was interrupted!");
                             }
                         });
@@ -1404,7 +1400,8 @@
                                 rstatus: status,
                                 remarks: remarks,
                                 ov_stat: wfs_trans_stat,
-                                curr_seq: curr_seq
+                                curr_seq: curr_seq,
+                                trans_type: trans_type
                             },
 
                             success: function(response) {
@@ -1435,7 +1432,8 @@
                                 swal("Failed to update status!");
                             }
                         });
-                        swal("Connection from other application was interrupted!");
+                        // swal("Connection from other application was intasdasdasderrupted!");
+
                     }
                 } 
             });

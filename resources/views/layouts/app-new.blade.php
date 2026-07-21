@@ -153,6 +153,9 @@
             display: block;
         }
 
+        .menu-item .menu-link {
+            border-radius: 4px !important;
+        }
     </style>
     @yield('pagecss')
 </head>
@@ -162,13 +165,13 @@
 
         <!-- Document Wrapper
  ============================================= -->
-        <div id="wrapper" style="min-height: 1000px; background-color: #efefef;">
+        <div id="wrapper" style="min-height: auto; background-color: #efefef; padding-bottom: 80px;">
 
             <!-- Header
   ============================================= -->
             <header id="header" class="border-bottom-0 no-sticky transparent-header header-custom-size">
                 <div id="header-wrap">
-                    <div class="container">
+                    <div class="container-fluid py-2">
                         <div class="d-flex justify-content-between w-100">
 
                             <!-- Logo
@@ -180,7 +183,7 @@
 
                             <!-- Primary Navigation
       ============================================= -->
-                            <nav class="primary-menu">
+                            <nav class="primary-menu" id="main_menu">
 
                                 <ul class="menu-container">
                                     <!-- Transactions with dropdown -->
@@ -188,14 +191,35 @@
                                         <a class="menu-link text-uppercase" href="javascript:void(0)">
                                             <div>Transactions</div>
                                         </a>
+                                        @php
+                                            $subMenuItems = [
+                                                'OREM'     => 'OREM',
+                                                'IMP'      => 'IMP',
+                                                'OSTR'     => 'OSTR',
+                                                'GATEPASS' => 'Gatepass',
+                                                'HK'       => 'Housekeeping',
+                                                'VBS'      => 'VBS',
+                                                'FMS'      => 'FMS',
+                                            ];
+
+                                            $userTransTypes = [];
+                                            if (!empty(Auth::user()->trans_types)) {
+                                                $userTransTypes = explode('|', Auth::user()->trans_types);
+                                            }
+                                        @endphp
+
                                         <ul class="sub-menu">
-                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'OREM']) }}">OREM</a></li>
-                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'IMP']) }}">IMP</a></li>
-                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'OSTR']) }}">OSTR</a></li>
-                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'GATEPASS']) }}">Gatepass</a></li>
-                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'HK']) }}">Housekeeping</a></li>
-                                            <li><a class="menu-link" href="{{ route('transactions.index_new', ['details' => 'VBS']) }}">VBS</a></li>
+                                            @foreach($subMenuItems as $code => $label)
+                                                @if(in_array($code, $userTransTypes))
+                                                    <li>
+                                                        <a class="menu-link" href="{{ route('transactions.index_new', ['details' => $code]) }}">
+                                                            {{ $label }}
+                                                        </a>
+                                                    </li>
+                                                @endif
+                                            @endforeach
                                         </ul>
+
                                     </li>
 
                                     <!-- History -->
@@ -248,7 +272,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="header-wrap-clone"></div>
+                <div class="header-wrap-clone" style="height: 85px;"></div>
             </header><!-- #header end -->
 
             <!-- Content (Sample navigation only for testing purposes, modify as per required)

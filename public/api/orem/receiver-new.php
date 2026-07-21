@@ -63,7 +63,11 @@
 
 							if(is_null($alt_gdm)) { $alt_gdm = ['id'	=> 0]; }
 
+							if (($gdept['department']<>'PMFI-CSR') && ($gdept['department']<>'PMC-MMPRC Foundation Inc') && ($gdept['department']<>'PMC-MMPRC Foundation, Inc')) {
+ 
+
 							sqlsrv_query($conn,"insert into approval_status (transaction_id,approver_id,alternate_approver_id,sequence_number,status,created_at,is_current) values (".$insertedID.",'".$gdmanager['id']."','".$alt_gdm['id']."','".$qry['sequence_number']."','PENDING',GETDATE(),0) ");
+						}
 							
 
 					}elseif(($qry['condition']==null || $qry['condition']=='') && $qry['designation']=='VERIFIER'){
@@ -120,15 +124,30 @@
 
 							}elseif($gamount['totalamount']>20000) {
 
+								if (($gdept['department']<>'PMFI-CSR') && ($gdept['department']<>'PMC-MMPRC Foundation Inc') && ($gdept['department']<>'PMC-MMPRC Foundation, Inc')) {
+ 
+ 
 								$gcondition = sqlsrv_query($conn,"select * from template_approvers where (condition='<=10000' OR condition='<=20000' OR condition='>20000') AND template_id='".$qry['template_id']."' ");
-
-								while($qrygcondition = sqlsrv_fetch_array($gcondition)){
-
+ 
+								while($qrygcondition = sqlsrv_fetch_array($gcondition)) {
+ 
 								sqlsrv_query($conn,"insert into approval_status (transaction_id,approver_id,alternate_approver_id,sequence_number,status,created_at,is_current) values (".$insertedID.",'".$qrygcondition['approver_id']."','".$qrygcondition['alternate_approver_id']."','".$qrygcondition['sequence_number']."','PENDING',GETDATE(),0) ");
 										
 									}
-
+ 
 										break;
+								} else {
+									$gcondition = sqlsrv_query($conn,"select * from template_approvers where (condition='<=10000' OR condition='<=20000') AND template_id='".$qry['template_id']."' ");
+ 
+								while($qrygcondition = sqlsrv_fetch_array($gcondition)){
+									
+ 
+								sqlsrv_query($conn,"insert into approval_status (transaction_id,approver_id,alternate_approver_id,sequence_number,status,created_at,is_current) values (".$insertedID.",'".$qrygcondition['approver_id']."','".$qrygcondition['alternate_approver_id']."','".$qrygcondition['sequence_number']."','PENDING',GETDATE(),0) ");
+										
+									}
+ 
+										break;
+								}
 
 							}
 						} else {
@@ -157,15 +176,30 @@
 
 							} elseif($gamount['converted_amount']>20000) {
 
+								if (($gdept['department']<>'PMFI-CSR') && ($gdept['department']<>'PMC-MMPRC Foundation Inc') && ($gdept['department']<>'PMC-MMPRC Foundation, Inc')) {
+ 
+ 
 								$gcondition = sqlsrv_query($conn,"select * from template_approvers where (condition='<=10000' OR condition='<=20000' OR condition='>20000') AND template_id='".$qry['template_id']."' ");
-
+ 
 								while($qrygcondition = sqlsrv_fetch_array($gcondition)) {
-
+ 
 								sqlsrv_query($conn,"insert into approval_status (transaction_id,approver_id,alternate_approver_id,sequence_number,status,created_at,is_current) values (".$insertedID.",'".$qrygcondition['approver_id']."','".$qrygcondition['alternate_approver_id']."','".$qrygcondition['sequence_number']."','PENDING',GETDATE(),0) ");
 										
 									}
-
+ 
 										break;
+								} else {
+									$gcondition = sqlsrv_query($conn,"select * from template_approvers where (condition='<=10000' OR condition='<=20000') AND template_id='".$qry['template_id']."' ");
+ 
+								while($qrygcondition = sqlsrv_fetch_array($gcondition)){
+									
+ 
+								sqlsrv_query($conn,"insert into approval_status (transaction_id,approver_id,alternate_approver_id,sequence_number,status,created_at,is_current) values (".$insertedID.",'".$qrygcondition['approver_id']."','".$qrygcondition['alternate_approver_id']."','".$qrygcondition['sequence_number']."','PENDING',GETDATE(),0) ");
+										
+									}
+ 
+										break;
+								}
 
 							}
 

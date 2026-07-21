@@ -160,6 +160,34 @@ class TransactionsController extends Controller
 
     public function index_new(Request $request)
     {
+        // //GATEPASS TEST
+        // try {
+        //     \Log::info("Gatepass test start...");
+
+        //     Http::timeout(2) // Don't let it hang the live system if the test system is down
+
+        //         ->withoutVerifying() // CRITICAL: Allows self-signed certs
+
+        //         ->post('https://mlsvrvstrgtpass.philsaga.com:8025/api/test_from_wfs', [
+
+        //             'test_mode' => true,
+
+        //             'source' => 'Live System Index Test',
+
+        //         ]);
+
+        //     \Log::info("Gatepass test done!");
+
+        // } catch (\Exception $e) {
+
+        //     // Silently fail so the live user sees nothing
+
+        //     \Log::error("Connection test failed: " . $e->getMessage());
+
+        // }
+        // //GATEPASS TEST
+
+
         $type = $request->get('details');
         $transactions = Transaction::where('details', 'like', '%' . $type . '%')
             ->whereIn('id' ,
@@ -205,12 +233,16 @@ class TransactionsController extends Controller
                 });
             });
         
-        $transTypes = ['OREM', 'IMP', 'OSTR', 'GATEPASS', 'HK', 'VBS'];
+        $transTypes = ['OREM', 'IMP', 'OSTR', 'GATEPASS', 'HK', 'VBS', 'FMS'];
         $pendingAll = [];
 
         foreach ($transTypes as $ttype) {
             $pendingAll[$ttype] = DB::table('approval_status')
-                ->join('users', 'users.id', '=', 'approval_status.approver_id')
+                //->join('users', 'users.id', '=', 'approval_status.approver_id')
+                ->join('users', function ($join) {
+                    $join->on('users.id', '=', 'approval_status.approver_id')
+                        ->orOn('users.id', '=', 'approval_status.alternate_approver_id');
+                })
                 ->join('transactions', 'transactions.id', '=', 'approval_status.transaction_id')
                 ->where('users.id', auth()->id())
                 ->where('transactions.status', 'PENDING')
@@ -246,154 +278,333 @@ class TransactionsController extends Controller
                 })->whereIn('status', ['PENDING','IN-PROGRESS','HOLD','RESUBMITTED'])->get();
             } else {
                 $transactions = $transactions->whereIn('status', ['PENDING','IN-PROGRESS', 'HOLD','RESUBMITTED'])->get();
+                // logger($transactions);
             }
 
         } else {
             $transactions = $transactions->whereIn('status', ['IN-PROGRESS', 'HOLD','RESUBMITTED'])->get();
         } 
 
+        //FOR VIEW DATE TRIGGER
+        if ($transactions) {
+            foreach ($transactions as $transaction) {
+                $approvals = ApprovalStatus::where('transaction_id', $transaction->id)->where('approver_id', auth()->id())->where('is_current', 1)->where('status', 'PENDING')->get();
+
+                foreach ($approvals as $approval) {
+                    if (is_null($approval->view_date)) {
+                        ApprovalStatus::where('id', $approval->id)
+                        ->update([
+                            'view_date' => now()
+                        ]);
+                    }
+                }
+            }
+        }
+
+
+
         return view('transaction.index_new',compact('transactions','upcoming','inprogress','pending','pendingAll'));
     }
 
     public function history(Request $request)
     {                
-        $departments = Transaction::select('department')->distinct()->orderBy('department','ASC')->get();
+        $departments = Transaction::select('department')
+            ->distinct()
+            ->orderBy('department', 'ASC')
+            ->get();
 
-         if (isset($request->date_filter)) {
+        $applications = Transaction::selectRaw("
+                DISTINCT CASE 
+                WHEN details LIKE '%OREM%' THEN 'OREM'
+                ELSE details
+                END AS details
+            ")
+            ->orderBy('details', 'ASC')
+            ->get();
+
+        // dd($request);
+
+
+        if (isset($request->date_filter)) {
             
-          $parts = explode(' - ' , $request->date_filter);
-          $date_from = $parts[0];
-          $date_to = $parts[1];
+            $parts = explode(' - ', $request->date_filter);
+            $date_from = $parts[0];
+            $date_to = $parts[1];
 
-          if(!isset($request->transstatus) && !isset($request->rdepartment)) {      
-            $histories = Transaction::whereIn('id',
-            function($query){
+            if (!isset($request->transstatus) && !isset($request->rdepartment)) {      
+                $histories = Transaction::whereIn('id', function ($query) {
+                    $query = $query->select('transaction_id')->from('approval_status');
+                    
+                    if (auth()->user()->designation == 'VERIFIER') {                    
+                        $query = $query->where('approver_id', '18');                     
+                    } elseif (auth()->user()->is_alternate) {
+                        $query = $query->where('alternate_approver_id', auth()->user()->id);
+                    } else {
+                        $query = $query->where('approver_id', auth()->user()->id);
+                    }
+                })
+                    
+                    ->when($request->application, function ($query) use ($request) {
+                        $query->where('details', 'like', "%{$request->application}%");
+                    })
+                    ->where('created_at', '>=', $date_from . ' 00:00:00.001')
+                    ->where('created_at', '<=', $date_to . ' 23:59:59.999')
+                    // ->whereIn('status',['FULLY APPROVED','CANCELLED'])
+                    ->whereIn('status', ['FULLY APPROVED', 'CANCELLED', 'IN-PROGRESS', 'HOLD'])
+                    ->get();
+
+            } elseif (!isset($request->transstatus) && isset($request->rdepartment)) {              
+
+                $histories = Transaction::whereIn('id', function ($query) {
+                    $query = $query->select('transaction_id')->from('approval_status');
+                    
+                    if (auth()->user()->designation == 'VERIFIER') {                    
+                        $query = $query->where('approver_id', '18');                     
+                    } elseif (auth()->user()->is_alternate) {
+                        $query = $query->where('alternate_approver_id', auth()->user()->id);
+                    } else {
+                        $query = $query->where('approver_id', auth()->user()->id);
+                    }                               
+                })
+                
+                    ->when($request->application, function ($query) use ($request) {
+                        $query->where('details', 'like', "%{$request->application}%");
+                    })
+                    ->where('created_at', '>=', $date_from . ' 00:00:00.001')
+                    ->where('created_at', '<=', $date_to . ' 23:59:59.999')
+                    ->where('department', '=', $request->rdepartment)
+                    // ->whereIn('status',['FULLY APPROVED','CANCELLED'])
+                    ->whereIn('status', ['FULLY APPROVED', 'CANCELLED', 'IN-PROGRESS', 'HOLD'])
+                    ->get();
+
+            } elseif (isset($request->transstatus) && !isset($request->rdepartment)) {   
+
+                $histories = Transaction::whereIn('id', function ($query) {
+                    $query = $query->select('transaction_id')->from('approval_status');
+                    
+                    if (auth()->user()->designation == 'VERIFIER') {                    
+                        $query = $query->where('approver_id', '18');                     
+                    } elseif (auth()->user()->is_alternate) {
+                        $query = $query->where('alternate_approver_id', auth()->user()->id);
+                    } else {
+                        $query = $query->where('approver_id', auth()->user()->id);
+                    }                               
+                })
+                    
+                    ->when($request->application, function ($query) use ($request) {
+                        $query->where('details', 'like', "%{$request->application}%");
+                    })
+                    ->where('created_at', '>=', $date_from . ' 00:00:00.001')
+                    ->where('created_at', '<=', $date_to . ' 23:59:59.999')            
+                    ->where('status', '=', $request->transstatus)            
+                    ->get();
+
+            } else {       
+
+                $histories = Transaction::whereIn('id', function ($query) {
+                    $query = $query->select('transaction_id')->from('approval_status');
+                    
+                    if (auth()->user()->designation == 'VERIFIER') {                    
+                        $query = $query->where('approver_id', '18');                     
+                    } elseif (auth()->user()->is_alternate) {
+                        $query = $query->where('alternate_approver_id', auth()->user()->id);
+                    } else {
+                        $query = $query->where('approver_id', auth()->user()->id);
+                    }                               
+                })
+                    
+                    ->when($request->application, function ($query) use ($request) {
+                        $query->where('details', 'like', "%{$request->application}%");
+                    })
+                    ->where('created_at', '>=', $date_from . ' 00:00:00.001')
+                    ->where('created_at', '<=', $date_to . ' 23:59:59.999')   
+                    ->where('status', '=', $request->transstatus)   
+                    ->where('department', '=', $request->rdepartment)
+                    ->get();
+            }
+
+            $date_filter   = $request->date_filter;
+            $transstatus   = $request->transstatus;
+            $seldepartment = $request->rdepartment;   
+
+        } else {
+            
+            $carbon_date_from = new Carbon('first day of this month');
+            $date_from = $carbon_date_from->toDateString();
+            $carbon_date_to = new Carbon('today');
+            $date_to = $carbon_date_to->toDateString();
+
+            $date_filter   = $date_from . ' - ' . $date_to;
+            $transstatus   = '';
+            $seldepartment = '';
+
+            $histories = Transaction::whereIn('id', function ($query) {
                 $query = $query->select('transaction_id')->from('approval_status');
                 
-                if(auth()->user()->designation == 'VERIFIER' ) {                    
-                    
+                if (auth()->user()->designation == 'VERIFIER') {                    
                     $query = $query->where('approver_id', '18');                     
-
-                }elseif(auth()->user()->is_alternate){
-                    $query = $query->where('alternate_approver_id',auth()->user()->id);
-                }else{
-                    $query = $query->where('approver_id',auth()->user()->id);
+                } elseif (auth()->user()->is_alternate) {
+                    $query = $query->where('alternate_approver_id', auth()->user()->id);
+                } else {
+                    $query = $query->where('approver_id', auth()->user()->id);
                 }                               
             })
-            ->where('created_at', '>=', $date_from . ' 00:00:00.001')
-            ->where('created_at', '<=', $date_to . ' 23:59:59.999')
-            // ->whereIn('status',['FULLY APPROVED','CANCELLED'])
-            ->whereIn('status',['FULLY APPROVED','CANCELLED','IN-PROGRESS','HOLD'])
-            ->get();
+                    
+                ->when($request->application, function ($query) use ($request) {
+                    $query->where('details', 'like', "%{$request->application}%");
+                })
+                ->where('created_at', '>=', $date_from . ' 00:00:00.001')
+                ->where('created_at', '<=', $date_to . ' 23:59:59.999')
+                ->whereIn('status', ['FULLY APPROVED', 'CANCELLED', 'IN-PROGRESS', 'HOLD'])
+                ->get();  
 
-          } elseif(!isset($request->transstatus) && isset($request->rdepartment)) {              
+            // $histories = Transaction::whereIn('status',['FULLY APPROVED','CANCELLED'])
+            //     ->get();      
+        }
 
-            $histories = Transaction::whereIn('id',
-            function($query){
-                $query = $query->select('transaction_id')->from('approval_status');
+        return view('transaction.history', compact('histories', 'date_filter', 'transstatus', 'departments', 'applications', 'seldepartment'));
+    }
+
+
+    // public function history(Request $request)
+    // {                
+    //     $departments = Transaction::select('department')->distinct()->orderBy('department','ASC')->get();
+
+    //      if (isset($request->date_filter)) {
+            
+    //       $parts = explode(' - ' , $request->date_filter);
+    //       $date_from = $parts[0];
+    //       $date_to = $parts[1];
+
+    //       if(!isset($request->transstatus) && !isset($request->rdepartment)) {      
+    //         $histories = Transaction::whereIn('id',
+    //         function($query){
+    //             $query = $query->select('transaction_id')->from('approval_status');
                 
-                if(auth()->user()->designation == 'VERIFIER' ) {                    
+    //             if(auth()->user()->designation == 'VERIFIER' ) {                    
                     
-                    $query = $query->where('approver_id', '18');                     
+    //                 $query = $query->where('approver_id', '18');                     
 
-                }elseif(auth()->user()->is_alternate){
-                    $query = $query->where('alternate_approver_id',auth()->user()->id);
-                }else{
-                    $query = $query->where('approver_id',auth()->user()->id);
-                }                               
-            })
-            ->where('created_at', '>=', $date_from . ' 00:00:00.001')
-            ->where('created_at', '<=', $date_to . ' 23:59:59.999')
-            ->where('department','=',$request->rdepartment) 
-            // ->whereIn('status',['FULLY APPROVED','CANCELLED'])
-            ->whereIn('status',['FULLY APPROVED','CANCELLED','IN-PROGRESS','HOLD'])
-            ->get();
+    //             }elseif(auth()->user()->is_alternate){
+    //                 $query = $query->where('alternate_approver_id',auth()->user()->id);
+    //             }else{
+    //                 $query = $query->where('approver_id',auth()->user()->id);
+    //             }                               
+    //         })
+    //         ->where('created_at', '>=', $date_from . ' 00:00:00.001')
+    //         ->where('created_at', '<=', $date_to . ' 23:59:59.999')
+    //         // ->whereIn('status',['FULLY APPROVED','CANCELLED'])
+    //         ->whereIn('status',['FULLY APPROVED','CANCELLED','IN-PROGRESS','HOLD'])
+    //         ->get();
 
-          } elseif(isset($request->transstatus) && !isset($request->rdepartment)) {   
+    //       } elseif(!isset($request->transstatus) && isset($request->rdepartment)) {              
 
-            $histories = Transaction::whereIn('id',
-            function($query){
-                $query = $query->select('transaction_id')->from('approval_status');
+    //         $histories = Transaction::whereIn('id',
+    //         function($query){
+    //             $query = $query->select('transaction_id')->from('approval_status');
                 
-                if(auth()->user()->designation == 'VERIFIER' ) {                    
+    //             if(auth()->user()->designation == 'VERIFIER' ) {                    
                     
-                    $query = $query->where('approver_id', '18');                     
+    //                 $query = $query->where('approver_id', '18');                     
 
-                }elseif(auth()->user()->is_alternate){
-                    $query = $query->where('alternate_approver_id',auth()->user()->id);
-                }else{
-                    $query = $query->where('approver_id',auth()->user()->id);
-                }                               
-            })
-            ->where('created_at', '>=', $date_from . ' 00:00:00.001')
-            ->where('created_at', '<=', $date_to . ' 23:59:59.999')            
-            ->where('status','=',$request->transstatus)            
-            ->get();
+    //             }elseif(auth()->user()->is_alternate){
+    //                 $query = $query->where('alternate_approver_id',auth()->user()->id);
+    //             }else{
+    //                 $query = $query->where('approver_id',auth()->user()->id);
+    //             }                               
+    //         })
+    //         ->where('created_at', '>=', $date_from . ' 00:00:00.001')
+    //         ->where('created_at', '<=', $date_to . ' 23:59:59.999')
+    //         ->where('department','=',$request->rdepartment) 
+    //         // ->whereIn('status',['FULLY APPROVED','CANCELLED'])
+    //         ->whereIn('status',['FULLY APPROVED','CANCELLED','IN-PROGRESS','HOLD'])
+    //         ->get();
 
-          } else {       
+    //       } elseif(isset($request->transstatus) && !isset($request->rdepartment)) {   
 
-
-            $histories = Transaction::whereIn('id',
-            function($query){
-                $query = $query->select('transaction_id')->from('approval_status');
+    //         $histories = Transaction::whereIn('id',
+    //         function($query){
+    //             $query = $query->select('transaction_id')->from('approval_status');
                 
-                if(auth()->user()->designation == 'VERIFIER' ) {                    
+    //             if(auth()->user()->designation == 'VERIFIER' ) {                    
                     
-                    $query = $query->where('approver_id', '18');                     
+    //                 $query = $query->where('approver_id', '18');                     
 
-                }elseif(auth()->user()->is_alternate){
-                    $query = $query->where('alternate_approver_id',auth()->user()->id);
-                }else{
-                    $query = $query->where('approver_id',auth()->user()->id);
-                }                               
-            })
-            ->where('created_at', '>=', $date_from . ' 00:00:00.001')
-            ->where('created_at', '<=', $date_to . ' 23:59:59.999')   
-            ->where('status','=',$request->transstatus)   
-            ->where('department','=',$request->rdepartment)
-            ->get();
-          }
+    //             }elseif(auth()->user()->is_alternate){
+    //                 $query = $query->where('alternate_approver_id',auth()->user()->id);
+    //             }else{
+    //                 $query = $query->where('approver_id',auth()->user()->id);
+    //             }                               
+    //         })
+    //         ->where('created_at', '>=', $date_from . ' 00:00:00.001')
+    //         ->where('created_at', '<=', $date_to . ' 23:59:59.999')            
+    //         ->where('status','=',$request->transstatus)            
+    //         ->get();
 
-          $date_filter=$request->date_filter;
-          $transstatus = $request->transstatus;
-          $seldepartment = $request->rdepartment;   
+    //       } else {       
 
-      } else {
+
+    //         $histories = Transaction::whereIn('id',
+    //         function($query){
+    //             $query = $query->select('transaction_id')->from('approval_status');
+                
+    //             if(auth()->user()->designation == 'VERIFIER' ) {                    
+                    
+    //                 $query = $query->where('approver_id', '18');                     
+
+    //             }elseif(auth()->user()->is_alternate){
+    //                 $query = $query->where('alternate_approver_id',auth()->user()->id);
+    //             }else{
+    //                 $query = $query->where('approver_id',auth()->user()->id);
+    //             }                               
+    //         })
+    //         ->where('created_at', '>=', $date_from . ' 00:00:00.001')
+    //         ->where('created_at', '<=', $date_to . ' 23:59:59.999')   
+    //         ->where('status','=',$request->transstatus)   
+    //         ->where('department','=',$request->rdepartment)
+    //         ->get();
+    //       }
+
+    //       $date_filter=$request->date_filter;
+    //       $transstatus = $request->transstatus;
+    //       $seldepartment = $request->rdepartment;   
+
+    //   } else {
         
-        $carbon_date_from = new Carbon('first day of this month');
-        $date_from = $carbon_date_from->toDateString();
-        $carbon_date_to = new Carbon('today');
-        $date_to = $carbon_date_to->toDateString();
+    //     $carbon_date_from = new Carbon('first day of this month');
+    //     $date_from = $carbon_date_from->toDateString();
+    //     $carbon_date_to = new Carbon('today');
+    //     $date_to = $carbon_date_to->toDateString();
 
-        $date_filter = $date_from .' - '. $date_to;
-        $transstatus = '';
-        $seldepartment = '';
+    //     $date_filter = $date_from .' - '. $date_to;
+    //     $transstatus = '';
+    //     $seldepartment = '';
 
-        $histories = Transaction::whereIn('id',
-            function($query){
-                $query = $query->select('transaction_id')->from('approval_status');
+    //     $histories = Transaction::whereIn('id',
+    //         function($query){
+    //             $query = $query->select('transaction_id')->from('approval_status');
                 
-                if(auth()->user()->designation == 'VERIFIER' ) {                    
+    //             if(auth()->user()->designation == 'VERIFIER' ) {                    
                     
-                    $query = $query->where('approver_id', '18');                     
+    //                 $query = $query->where('approver_id', '18');                     
 
-                }elseif(auth()->user()->is_alternate){
-                    $query = $query->where('alternate_approver_id',auth()->user()->id);
-                }else{
-                    $query = $query->where('approver_id',auth()->user()->id);
-                }                               
-            })
-        ->where('created_at', '>=', $date_from . ' 00:00:00.001')
-        ->where('created_at', '<=', $date_to . ' 23:59:59.999')
-        ->whereIn('status',['FULLY APPROVED','CANCELLED','IN-PROGRESS','HOLD'])
-        ->get();  
+    //             }elseif(auth()->user()->is_alternate){
+    //                 $query = $query->where('alternate_approver_id',auth()->user()->id);
+    //             }else{
+    //                 $query = $query->where('approver_id',auth()->user()->id);
+    //             }                               
+    //         })
+    //     ->where('created_at', '>=', $date_from . ' 00:00:00.001')
+    //     ->where('created_at', '<=', $date_to . ' 23:59:59.999')
+    //     ->whereIn('status',['FULLY APPROVED','CANCELLED','IN-PROGRESS','HOLD'])
+    //     ->get();  
 
-        // $histories = Transaction::whereIn('status',['FULLY APPROVED','CANCELLED'])
-        // ->get();      
-    }
+    //     // $histories = Transaction::whereIn('status',['FULLY APPROVED','CANCELLED'])
+    //     // ->get();      
+    // }
 
-        return view('transaction.history',compact('histories','date_filter','transstatus','departments','seldepartment'));
-    }
+    //     return view('transaction.history',compact('histories','date_filter','transstatus','departments','seldepartment'));
+    // }
 
     public function get_request_details($id)
     {
@@ -468,7 +679,6 @@ class TransactionsController extends Controller
             $next = ApprovalStatus::where('transaction_id',$id)->where('sequence_number', '>', $firstinstance->sequence_number)->first(); 
 
         } else {
-
             $previous = ApprovalStatus::where('transaction_id',$id)->where('sequence_number', '<', $currentuser->sequence_number)->orderBy('id', 'DESC')->first(); 
             $next = ApprovalStatus::where('transaction_id',$id)->where('sequence_number', '>', $currentuser->sequence_number)->first();
 
@@ -479,22 +689,32 @@ class TransactionsController extends Controller
                 ->where('sequence_number', $curr_seq->sequence_number)
                 ->where('approver_id',Auth::user()->id)->first(); 
         }
-
-        try {
+        $transactionDetails = null;
+        if($data->details === "HK"){
+            try {
             $url = env('HK_API_URL') . 'transaction-details/' . $data->ref_req_no;
-
-            $response = Http::get($url, [
+            Log::info($url);
+            $response = Http::withOptions([
+                'verify' => false,
+                /*
+                'curl' => [
+                    CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
+                ],
+                */
+            ])->get($url, [
                 'whic_token' => 'epwKerea6oFJKEAy7zyOkifnv1Re9r'
             ]);
 
             if ($response->successful()) {
                 $transactionDetails = $response->json();
             } else {
+                /*
                 Log::warning('HK API request failed', [
                     'url' => $url,
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
+                */
                 $transactionDetails = null;
             }
         } catch (\Throwable $e) {
@@ -504,6 +724,7 @@ class TransactionsController extends Controller
             ]);
             $transactionDetails = null;
         }
+    }
 
         return view('transaction.details',compact('transactionDetails', 'data','lastapprover','approverstatus','currentuser','previous','next','curr_seq','last_app_seq','historicalremarks'));
     }
@@ -512,7 +733,7 @@ class TransactionsController extends Controller
     public function approve($id)
     {
         $transaction = Transaction::find($id);
-        $transaction->update(['status' => 'APPROVED']);        
+        $transaction->update(['status' => 'APPROVED']);
 
         return response()->json();
     }

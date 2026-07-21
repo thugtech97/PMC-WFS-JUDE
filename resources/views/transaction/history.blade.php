@@ -19,110 +19,143 @@
 
 @section('content')
     <div class="container-fluid">
-    <form action="{{ route('transactions.history') }}" method="GET">
-        @csrf
-        <div class="page-header">
-            
-            <div class="row align-items-center">
-                <!-- Header Card -->
-                <div class="col-lg-8">
-                    <div class="card shadow-sm">
-                        <div class="card-body d-flex align-items-center">
-                            <span class="me-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none"
-                                    viewBox="0 0 24 24">
-                                    <path stroke="#5E17EB" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M10 3v4a1 1 0 0 1-1 1H5m4 10v-2m3 2v-6m3 6v-3m4-11v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z" />
-                                </svg>
-                            </span>
-                            <div>
-                                <h5 class="card-title mb-1"><b>Historical Transactions</b></h5>
-                                <p class="card-text text-muted mb-0" style="font-size:14px;">
-                                    Below are the list of previous transactions and filter to generate a history of
-                                    transactions.
-                                </p>
+        <form action="{{ route('transactions.history') }}" method="GET">
+            @csrf
+            <div class="page-header">
+                
+                <div class="row align-items-center">
+                    <!-- Header Card -->
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <span class="me-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none"
+                                        viewBox="0 0 24 24">
+                                        <path stroke="#5E17EB" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M10 3v4a1 1 0 0 1-1 1H5m4 10v-2m3 2v-6m3 6v-3m4-11v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z" />
+                                    </svg>
+                                </span>
+                                <div>
+                                    <h5 class="card-title mb-1"><b>Historical Transactions</b></h5>
+                                    <p class="card-text text-muted mb-0" style="font-size:14px;">
+                                        Below are the list of previous transactions and filter to generate a history of
+                                        transactions.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Breadcrumbs -->
-                <div class="col-lg-4 d-flex align-items-center justify-content-lg-end mt-3 mt-lg-0">
-                    <nav class="breadcrumb-container" aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item d-flex align-items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
-                                    viewBox="0 0 24 24" class="me-1" style="transform: translateY(-2px);">
-                                    <path stroke="#5E17EB" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M10 3v4a1 1 0 0 1-1 1H5m4 10v-2m3 2v-6m3 6v-3m4-11v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z" />
-                                </svg>
-                                <a href="{{ route('transactions.index_new', ['details' => 'OREM']) }}">Transactions</a>
-                            </li>
-                            <li class="breadcrumb-item active" aria-current="page">History</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>    
+                    <!-- Breadcrumbs -->
+                    <div class="col-lg-4 d-flex align-items-center justify-content-lg-end mt-3 mt-lg-0">
+                        <nav class="breadcrumb-container" aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item d-flex align-items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                        viewBox="0 0 24 24" class="me-1" style="transform: translateY(-2px);">
+                                        <path stroke="#5E17EB" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M10 3v4a1 1 0 0 1-1 1H5m4 10v-2m3 2v-6m3 6v-3m4-11v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z" />
+                                    </svg>
+                                    <a href="{{ route('transactions.index_new', ['details' => 'OREM']) }}">Transactions</a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">History</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>    
 
-            <br />
+                <br />
 
-            <div class="card border-fade box-shadow p-3">
-                <div class="d-flex align-items-center justify-content-start">
-                    <span  class="svg-class">
-                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6m-6 4h6m-6 4h6M6 3v18l2-2 2 2 2-2 2 2 2-2 2 2V3l-2 2-2-2-2 2-2-2-2 2-2-2Z"/>
+                <div class="card border-fade box-shadow p-3">
+                    {{-- <div class="d-flex align-items-center justify-content-start">
+                        <span  class="svg-class">
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6m-6 4h6m-6 4h6M6 3v18l2-2 2 2 2-2 2 2 2-2 2 2V3l-2 2-2-2-2 2-2-2-2 2-2-2Z"/>
+                            </svg>
+                        </span>
+                        <h5 style="margin: 0; margin-left: -2px;"><b>Generate History</b></h5>
+                    </div> --}}
+                    <div class="d-flex align-items-center justify-content-start">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" class="text-primary me-2">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"  d="M9 8h6m-6 4h6m-6 4h6M6 3v18l2-2 2 2 2-2 2 2 2-2 2 2V3l-2 2-2-2-2 2-2-2-2 2-2-2Z"/>
                         </svg>
-                    </span>
-                    <h5 style="margin: 0; margin-left: -2px;"><b>Generate History</b></h5>
-                </div>
-                <div class="w-full d-flex mt-3 gap-8">
-                    <div class="col-6 d-flex flex-column">
-                        <div class="mb-4 d-flex flex-column dept-selection">
-                            <strong>Department</strong>
-                            <select class="js-example-basic-single js-states form-control" data-live-search="true" id="id_label_single" name="rdepartment" style="height: 30px; min-width: 100%;"> 
-                              @if($seldepartment)
-                              <option value="{{ $seldepartment }}">{{ $seldepartment }}</option>
-                              @endif
-                              <option value="">SELECT</option>
-                              @foreach ($departments as $department)
-                                  <option value="{{ $department->department}}">{{ $department->department}}</option>
-                              @endforeach
-                            </select>
+                        <h5 class="mb-0 fw-bold">Generate History</h5>
+                    </div>
+                    <div class="w-full d-flex mt-3 gap-8">
+                        <div class="col-6 d-flex flex-column">
+                            <div class="mb-4 d-flex flex-column dept-selection">
+                                <strong>Department</strong>
+                                <select class="js-example-basic-single js-states form-control" data-live-search="true" id="id_label_single" name="rdepartment" style="height: 30px; min-width: 100%;"> 
+                                @if($seldepartment)
+                                <option value="{{ $seldepartment }}">{{ $seldepartment }}</option>
+                                @endif
+                                <option value="">SELECT</option>
+                                @foreach ($departments as $department)
+                                    <option value="{{ $department->department}}">{{ $department->department}}</option>
+                                @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <strong>Status</strong>
+                                <select class="bs-select form-control" data-live-search="true" id="transstatus" name="transstatus" style="height: 30px;"> 
+                                @if($transstatus)
+                                <option value="{{ $transstatus }}">{{ $transstatus }}</option>
+                                @endif
+                                <option value="">SELECT</option>
+                                <option value="FULLY APPROVED">FULLY APPROVED</option>
+                                <option value="CANCELLED">CANCELLED</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-4">
-                            <strong>Status</strong>
-                            <select class="bs-select form-control" data-live-search="true" id="transstatus" name="transstatus" style="height: 30px;"> 
-                              @if($transstatus)
-                              <option value="{{ $transstatus }}">{{ $transstatus }}</option>
-                              @endif
-                              <option value="">SELECT</option>
-                              <option value="FULLY APPROVED">FULLY APPROVED</option>
-                              <option value="CANCELLED">CANCELLED</option>
-                            </select>
+                        <div class="col-6 d-flex flex-column">
+                            <div class="mb-4">
+                                <strong>Date Range</strong>
+                                <input type="text" class="form-control" text-align="center" name="date_filter" id="date_filter"style="height: 30px;" />
+                            </div>
+                            <div class="mb-4">
+                                <strong>Application</strong>
+                                <select class="js-example-basic-single js-states form-control" data-live-search="true" id="id_label_single" name="application" style="height: 30px; min-width: 100%;"> 
+                                <option value="">SELECT</option>
+                                @foreach ($applications as $application)
+                                    <option value="{{ $application->details}}" @if(request('application') == $application->details) selected @endif>{{ $application->details}}</option>
+                                @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-6 d-flex flex-column">
-                        <div class="mb-4">
-                            <strong>Date Range</strong>
-                            <input type="text" class="form-control" text-align="center" name="date_filter" id="date_filter"style="height: 30px;" />
-                        </div>
-                        <div class="mb-4 d-flex flex-column">
-                            <strong>&nbsp;</strong>
-                            <button type="submit" style="min-height: 34px !important; line-height: 2;" name="filter_submit" class="btn btn-sm btn-success d-flex align-items-center justify-content-center">
-                                <svg class="mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M5 3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5Zm0 12a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H5Zm12 0a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-2Zm0-12a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2Z"/>
-                                  <path fill-rule="evenodd" d="M10 6.5a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1ZM10 18a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1Zm-4-4a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1Zm12 0a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1Z" clip-rule="evenodd"/>
-                                </svg>
-                                Generate
-                            </button>
-                        </div>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="submit" name="filter_submit" 
+                                class="btn btn-success d-flex align-items-center justify-content-center px-4"
+                                style="min-height: 36px;">
+                            <svg class="me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" 
+                                width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M5 3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5Zm0 12a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H5Zm12 0a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-2Zm0-12a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2Z"/>
+                                <path fill-rule="evenodd" 
+                                    d="M10 6.5a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1ZM10 18a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1Zm-4-4a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1Zm12 0a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1Z" 
+                                    clip-rule="evenodd"/>
+                            </svg>
+                            Generate
+                        </button>
                     </div>
+                    {{-- <div class="col-12 d-flex flex-column">
+                        <div class="col-6 offset-6 d-flex flex-column">
+                            <div class="mb-4 d-flex flex-column">
+                                <strong>&nbsp;</strong>
+                                <button type="submit" style="min-height: 34px !important; line-height: 2;" name="filter_submit" class="btn btn-sm btn-success d-flex align-items-center justify-content-center">
+                                    <svg class="mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M5 3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5Zm0 12a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H5Zm12 0a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-2Zm0-12a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2Z"/>
+                                        <path fill-rule="evenodd" d="M10 6.5a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1ZM10 18a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1Zm-4-4a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1Zm12 0a1 1 0 0 1-1-1v-2a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1Z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Generate
+                                </button>
+                            </div>
+                        </div>
+                    </div> --}}
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
         
         <div class="col-md-12 table-container-class">
 
@@ -182,7 +215,7 @@
                          <th>Amount</th>
                         <th>Approval Summary</th>
                         <th>Overall Status</th>
-                        <th>Purpose</th>
+                        <th>{{ (request('details') == "HK") ? 'Week #' : 'Purpose' }}</th>
                         <th hidden>Action</th>
                     </thead>
 
